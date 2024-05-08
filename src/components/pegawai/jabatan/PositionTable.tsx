@@ -77,7 +77,7 @@ const PositionTable = (): React.ReactElement => {
           </TableHead>
           <TableBody>
             {positionList.map((positions, index) => (
-              <TableRow key={index}>
+              <TableRow key={positions.jabatanId}>
                 <TableCell>
                   <Typography
                     sx={{
@@ -113,7 +113,7 @@ const PositionTable = (): React.ReactElement => {
                 </TableCell>
                 <TableCell>
                   <Button
-                    href="#"
+                    href={`/pegawai/jabatan/${positions.jabatanId}`}
                     variant="outlined"
                     style={{ marginRight: "10px" }}
                   >

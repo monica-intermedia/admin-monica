@@ -3,6 +3,7 @@ import axios from "axios";
 
 interface Position {
   jabatan: string;
+  jabatanId: any;
 }
 
 export function getJabatan() {
@@ -16,4 +17,8 @@ export function getJabatan() {
     }
   };
   return { positionList, fetchData };
+}
+
+export function editJabatan() {
+  const req;
 }
