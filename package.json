@@ -25,6 +25,7 @@
     "@tabler/icons": "^2.1.2",
     "@tabler/icons-react": "^2.1.1",
     "apexcharts": "3.36.3",
+    "axios": "^1.6.8",
     "lodash": "^4.17.21",
     "next": "latest",
     "next-auth": "^4.24.7",

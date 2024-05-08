@@ -1,13 +1,12 @@
 import type { ReactElement } from "react";
-import SalaryTable from "../../../src/components/kas-keluar/SalaryTable";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
-// import DashboardCard from "../../../src/components/shared/DashboardCard";
+import PositionTable from "../../../src/components/pegawai/jabatan/PositionTable";
 
 const Index = (): any => {
   return (
     <PageContainer title="pembelian barang" description="this is Sample page">
-      <SalaryTable />
+      <PositionTable />
     </PageContainer>
   );
 };
