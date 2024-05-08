@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { IconPrinter } from "@tabler/icons-react";
 import {
   Typography,
@@ -13,25 +13,17 @@ import {
 } from "@mui/material";
 import DashboardCard from "../../shared/DashboardCard";
 import FormDialog from "../../../modals/kas-keluar/FormDialogModals";
-
-const position = [
-  {
-    no: 1,
-    jabatan: "HRD",
-  },
-  {
-    no: 2,
-    jabatan: "Manager",
-  },
-  {
-    no: 3,
-    jabatan: "Staff",
-  },
-];
+import { getJabatan } from "./action/action";
 
 const PositionTable = (): React.ReactElement => {
+  const { positionList, fetchData } = getJabatan();
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   return (
-    <DashboardCard title="Tabel Pembelian Barang">
+    <DashboardCard title="Tabel  Jabatan">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
@@ -41,6 +33,7 @@ const PositionTable = (): React.ReactElement => {
               style={{
                 paddingRight: "20px",
                 paddingLeft: "20px",
+                marginLeft: "20px",
               }}
             >
               <IconPrinter />
@@ -77,14 +70,14 @@ const PositionTable = (): React.ReactElement => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Nomor Transaksi
+                  Jabatan
                 </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {position.map((positions) => (
-              <TableRow key={positions.no}>
+            {positionList.map((positions, index) => (
+              <TableRow key={index}>
                 <TableCell>
                   <Typography
                     sx={{
@@ -92,7 +85,7 @@ const PositionTable = (): React.ReactElement => {
                       fontWeight: "500",
                     }}
                   >
-                    {positions.no}
+                    {index + 1}
                   </Typography>
                 </TableCell>
                 <TableCell>

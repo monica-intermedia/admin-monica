@@ -5,7 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 interface User {
   id: string;
   email: string;
-  // Tambahkan field lain yang diperlukan
 }
 
 const authOptions: NextAuthOptions = {

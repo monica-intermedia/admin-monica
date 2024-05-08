@@ -90,13 +90,13 @@ const Menuitems = [
     id: uniqueId(),
     title: "Jabatan",
     icon: IconCertificate,
-    href: "/pegagwai/jabatan",
+    href: "/pegawai/jabatan",
   },
   {
     id: uniqueId(),
     title: "Absensi",
     icon: IconCalendar,
-    href: "/pegagwai/Absensi",
+    href: "/pegawai/Absensi",
   },
 
   // Barang
