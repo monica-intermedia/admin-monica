@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { IconPrinter } from "@tabler/icons-react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   Typography,
   Box,
@@ -13,17 +13,33 @@ import {
 } from "@mui/material";
 import DashboardCard from "../../shared/DashboardCard";
 import FormDialog from "../../../modals/kas-keluar/FormDialogModals";
-import { getJabatan } from "./action/action";
+import { handleDelete } from "./action/actionJabatan";
+
+interface Position {
+  jabatan: string;
+  jabatanId: string;
+}
 
 const PositionTable = (): React.ReactElement => {
-  const { positionList, fetchData } = getJabatan();
+  const [jabatan, setJabatan] = useState<Position[]>([]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/pegawai/jabatan"
+        );
+        setJabatan(response.data.data);
+      } catch (error) {
+        console.error("Error fetching position data:", error);
+      }
+    };
+
     fetchData();
-  }, [fetchData]);
+  }, []);
 
   return (
-    <DashboardCard title="Tabel  Jabatan">
+    <DashboardCard title="Tabel Jabatan">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
@@ -36,7 +52,7 @@ const PositionTable = (): React.ReactElement => {
                 marginLeft: "20px",
               }}
             >
-              <IconPrinter />
+              IconPrinter
             </Button>
           </Box>
           <Box>
@@ -73,10 +89,15 @@ const PositionTable = (): React.ReactElement => {
                   Jabatan
                 </Typography>
               </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Actions
+                </Typography>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {positionList.map((positions, index) => (
+            {jabatan.map((positions, index) => (
               <TableRow key={positions.jabatanId}>
                 <TableCell>
                   <Typography
@@ -119,7 +140,11 @@ const PositionTable = (): React.ReactElement => {
                   >
                     Edit
                   </Button>
-                  <Button href="#" variant="outlined" color="error">
+                  <Button
+                    onClick={() => handleDelete(positions.jabatanId)}
+                    variant="outlined"
+                    color="error"
+                  >
                     Delete
                   </Button>
                 </TableCell>
