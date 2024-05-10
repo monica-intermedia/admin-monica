@@ -14,6 +14,7 @@ import {
 import DashboardCard from "../../shared/DashboardCard";
 import FormDialog from "../../../modals/kas-keluar/FormDialogModals";
 import { handleDelete } from "./action/actionJabatan";
+import Link from "next/link";
 
 interface Position {
   jabatan: string;
@@ -133,20 +134,21 @@ const PositionTable = (): React.ReactElement => {
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <Button
+                  <Link
                     href={`/pegawai/jabatan/${positions.jabatanId}`}
-                    variant="outlined"
                     style={{ marginRight: "10px" }}
                   >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(positions.jabatanId)}
-                    variant="outlined"
-                    color="error"
-                  >
-                    Delete
-                  </Button>
+                    <Button variant="outlined">Edit</Button>
+                  </Link>
+                  <Link href="#" passHref>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDelete(positions.jabatanId)}
+                    >
+                      Delete
+                    </Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}
