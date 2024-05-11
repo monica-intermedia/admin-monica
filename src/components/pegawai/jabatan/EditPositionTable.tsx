@@ -21,8 +21,6 @@ const EditPositionTable = (): any => {
     setJabatan({ ...jabatan, jabatan: e.target.value });
   };
 
-  console.log(handleJabatanChange);
-
   const updateData = async () => {
     if (jabatan && jabatan.jabatan !== null) {
       // memeriksa apakah jabatan null atau tidackkkkkkk
