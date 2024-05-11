@@ -35,6 +35,7 @@ const authOptions: NextAuthOptions = {
             const user: User = await res.json(); // Pastikan respon sesuai dengan tipe User
             return user;
           } else {
+            alert("email atau password salah");
             return null; // Handle kegagalan autentikasi
           }
         } catch (error) {
