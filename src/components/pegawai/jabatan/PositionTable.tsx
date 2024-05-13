@@ -11,8 +11,8 @@ import {
   Button,
   TextField,
 } from "@mui/material";
+import { IconPlus, IconPrinter } from "@tabler/icons-react";
 import DashboardCard from "../../shared/DashboardCard";
-import FormDialog from "../../../modals/kas-keluar/FormDialogModals";
 import { handleDelete } from "./action/actionJabatan";
 import Link from "next/link";
 
@@ -44,8 +44,11 @@ const PositionTable = (): React.ReactElement => {
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <Link href={"/pegawai/jabatan/tambah-posisi"}>Fakkk</Link>
-            <FormDialog />
+            <Link href={"/pegawai/jabatan/tambah-posisi"}>
+              <Button variant="contained">
+                <IconPlus />
+              </Button>
+            </Link>
             <Button
               variant="contained"
               style={{
@@ -54,7 +57,7 @@ const PositionTable = (): React.ReactElement => {
                 marginLeft: "20px",
               }}
             >
-              IconPrinter
+              <IconPrinter />
             </Button>
           </Box>
           <Box>
@@ -63,7 +66,7 @@ const PositionTable = (): React.ReactElement => {
               <TextField
                 id="search-bar"
                 className="text"
-                label="masukan nama barang"
+                label="masukan nama jabatan"
                 variant="outlined"
                 placeholder="Search..."
                 size="small"
