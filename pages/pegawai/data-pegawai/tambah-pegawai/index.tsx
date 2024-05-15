@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
-import PageContainer from "../../../src/components/container/PageContainer";
-import FullLayout from "../../../src/layouts/full/FullLayout";
-import PegawaiTable from "../../../src/components/pegawai/pegawai/PegawaiTable";
+import PageContainer from "../../../../src/components/container/PageContainer";
+import FullLayout from "../../../../src/layouts/full/FullLayout";
+import PegawaiTable from "../../../../src/components/pegawai/pegawai/PegawaiTable";
 
 const Index = (): any => {
   return (
