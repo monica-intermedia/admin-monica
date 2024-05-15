@@ -282,7 +282,7 @@ const PositionTable = (): React.ReactElement => {
                 </TableCell>
                 <TableCell>
                   <Link
-                    href={`/pegawai/jabatan/${staff.pegawaiId}`}
+                    href={`/pegawai/data-pegawai/${staff.pegawaiId}`}
                     style={{ marginRight: "10px" }}
                   >
                     <Button variant="outlined">Edit</Button>
