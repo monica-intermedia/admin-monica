@@ -15,13 +15,18 @@ import { IconPlus, IconPrinter } from "@tabler/icons-react";
 import DashboardCard from "../../shared/DashboardCard";
 import Link from "next/link";
 
+interface Jabatan {
+  jabatan: string;
+}
+
 interface Staff {
   pegawaiId: string;
   nip: string;
-  name: string;
+  Name: string;
+  alamat: string;
   email: string;
   handphone: string;
-  jabatanId: string;
+  jabatan: Jabatan;
 }
 
 const PositionTable = (): React.ReactElement => {
@@ -43,7 +48,7 @@ const PositionTable = (): React.ReactElement => {
   }, []);
 
   return (
-    <DashboardCard title="Tabel Jabatan">
+    <DashboardCard title="Tabel Pegawai">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
@@ -69,7 +74,7 @@ const PositionTable = (): React.ReactElement => {
               <TextField
                 id="search-bar"
                 className="text"
-                label="masukan nama jabatan"
+                label="masukan nama pegawai"
                 variant="outlined"
                 placeholder="Search..."
                 size="small"
@@ -94,12 +99,32 @@ const PositionTable = (): React.ReactElement => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Jabatan
+                  NIP
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Actions
+                  Nama
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Alamat
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Email
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Handphone
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Jabatan
                 </Typography>
               </TableCell>
             </TableRow>
@@ -141,8 +166,123 @@ const PositionTable = (): React.ReactElement => {
                   </Box>
                 </TableCell>
                 <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box>
+                      <Typography
+                        variant="subtitle2"
+                        fontWeight={600}
+                      ></Typography>
+                      <Typography
+                        color="textSecondary"
+                        sx={{
+                          fontSize: "13px",
+                        }}
+                      >
+                        {staff.Name}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box>
+                      <Typography
+                        variant="subtitle2"
+                        fontWeight={600}
+                      ></Typography>
+                      <Typography
+                        color="textSecondary"
+                        sx={{
+                          fontSize: "13px",
+                        }}
+                      >
+                        {staff.alamat}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box>
+                      <Typography
+                        variant="subtitle2"
+                        fontWeight={600}
+                      ></Typography>
+                      <Typography
+                        color="textSecondary"
+                        sx={{
+                          fontSize: "13px",
+                        }}
+                      >
+                        {staff.email}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box>
+                      <Typography
+                        variant="subtitle2"
+                        fontWeight={600}
+                      ></Typography>
+                      <Typography
+                        color="textSecondary"
+                        sx={{
+                          fontSize: "13px",
+                        }}
+                      >
+                        {staff.handphone}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box>
+                      <Typography
+                        variant="subtitle2"
+                        fontWeight={600}
+                      ></Typography>
+                      <Typography
+                        color="textSecondary"
+                        sx={{
+                          fontSize: "13px",
+                        }}
+                      >
+                        {staff.jabatan.jabatan}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
                   <Link
-                    href={`/pegawai/jabatan/${staff.jabatanId}`}
+                    href={`/pegawai/jabatan/${staff.pegawaiId}`}
                     style={{ marginRight: "10px" }}
                   >
                     <Button variant="outlined">Edit</Button>
