@@ -44,8 +44,10 @@ const AddPegawaiTable = (): React.ReactElement => {
   useEffect(() => {
     const fetchJabatan = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/jabatan");
-        setJabatan(response.data);
+        const response = await axios.get(
+          "http://localhost:8080/pegawai/jabatan"
+        );
+        setJabatan(response.data.data);
       } catch (error) {
         console.error("Failed to fetch jabatan:", error);
       }
@@ -53,6 +55,8 @@ const AddPegawaiTable = (): React.ReactElement => {
 
     fetchJabatan();
   }, []);
+
+  console.log(jabatan);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -184,11 +188,17 @@ const AddPegawaiTable = (): React.ReactElement => {
               onChange={handleInputChange}
               value={addPegawai.jabatanId}
             >
-              {jabatan.map((option) => (
-                <MenuItem key={option.jabatanId} value={option.jabatanId}>
-                  {option.jabatan}
+              {jabatan.length > 0 ? (
+                jabatan.map((option) => (
+                  <MenuItem key={option.jabatanId} value={option.jabatanId}>
+                    {option.jabatan}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem value="">
+                  <em>None</em>
                 </MenuItem>
-              ))}
+              )}
             </TextField>
           </FormControl>
         </Box>

@@ -47,12 +47,31 @@ const PositionTable = (): React.ReactElement => {
     fetchData();
   }, []);
 
+  const DeleteJabatan = async (pegawaiId: string) => {
+    try {
+      await axios.delete(`http://localhost:8080/pegawai/pegawai/${pegawaiId}`);
+      return true;
+    } catch (error) {
+      console.error("Error deleting jabatan :", error);
+      return false;
+    }
+  };
+
+  const handleDelete = async (pegawaiId: string) => {
+    if (window.confirm("Are you sure you want to delete this pegawai?")) {
+      const isDeleted = await DeleteJabatan(pegawaiId);
+      if (isDeleted) {
+        setStaff(staff.filter((item) => item.pegawaiId != pegawaiId));
+      }
+    }
+  };
+
   return (
     <DashboardCard title="Tabel Pegawai">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <Link href={"/pegawai/jabatan/tambah-posisi"}>
+            <Link href={"/pegawai/data-pegawai/tambah-pegawai"}>
               <Button variant="contained">
                 <IconPlus />
               </Button>
@@ -288,7 +307,11 @@ const PositionTable = (): React.ReactElement => {
                     <Button variant="outlined">Edit</Button>
                   </Link>
                   <Link href="#" passHref>
-                    <Button variant="outlined" color="error">
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={() => handleDelete(staff.pegawaiId)}
+                    >
                       Delete
                     </Button>
                   </Link>
