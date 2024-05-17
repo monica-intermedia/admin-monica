@@ -12,94 +12,104 @@ import {
   MenuItem,
 } from "@mui/material";
 import axios from "axios";
+import { useRouter } from "next/router";
+
+type Jabatan = {
+  jabatanId: string;
+  jabatan: string;
+};
 
 type Pegawai = {
   pegawaiId?: string;
-  nip: string;
+  nip: string | null;
   Name: string;
   alamat: string;
   email: string;
   handphone: string;
-  jabatanId?: string;
-};
-
-type Jabatan = {
-  jabatanId?: string;
-  jabatan: string;
+  jabatanId: string;
 };
 
 const EditPegawaiTable = (): React.ReactElement => {
-  const [addPegawai, setAddPegawai] = useState<Pegawai>({
-    pegawaiId: "",
-    nip: "",
-    Name: "",
-    alamat: "",
-    email: "",
-    handphone: "",
-    jabatanId: "",
-  });
-
+  const [pegawai, setPegawai] = useState<Pegawai>();
   const [jabatan, setJabatan] = useState<Jabatan[]>([]);
+  const router = useRouter();
+  const { id } = router.query;
 
+  // Fetch pegawai data
   useEffect(() => {
-    const fetchJabatan = async () => {
+    const fetchPegawaiData = async () => {
+      if (id) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/pegawai/pegawai/${id}`
+          );
+          setPegawai(response.data.data);
+        } catch (error) {
+          console.error("Error fetching data: ", error);
+        }
+      }
+    };
+    fetchPegawaiData();
+  }, [id]);
+
+  // Fetch jabatan data
+  useEffect(() => {
+    const fetchJabatanData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/pegawai/jabatan"
+          `http://localhost:8080/pegawai/jabatan`
         );
         setJabatan(response.data.data);
       } catch (error) {
-        console.error("Failed to fetch jabatan:", error);
+        console.error("Fail to get jabatan data: ", error);
       }
     };
-
-    fetchJabatan();
+    fetchJabatanData();
   }, []);
 
-  console.log(jabatan);
-
-  const handleInputChange = (
+  // Handle input changes
+  const handleEditPegawai = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setAddPegawai({ ...addPegawai, [name]: value });
+    setPegawai((prevState) =>
+      prevState ? { ...prevState, [name]: value } : undefined
+    );
   };
 
-  const addData = async (e: React.FormEvent<HTMLFormElement>) => {
+  // Handle form submission
+  const updateData = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!pegawai) {
+      console.error("Pegawai Undefined");
+      return;
+    }
+
+    const requestingData = {
+      nip: pegawai.nip,
+      Name: pegawai.Name,
+      alamat: pegawai.alamat,
+      email: pegawai.email,
+      handphone: pegawai.handphone,
+      jabatanId: pegawai.jabatanId,
+    };
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/pegawai/pegawai",
-        addPegawai
+      await axios.put(
+        `http://localhost:8080/pegawai/pegawai/${id}`,
+        requestingData
       );
-
-      if (response.status === 201) {
-        alert("Pegawai created successfully");
-
-        setAddPegawai({
-          pegawaiId: "",
-          nip: "",
-          Name: "",
-          alamat: "",
-          email: "",
-          handphone: "",
-          jabatanId: "",
-        });
-      } else {
-        alert("Failed to create pegawai");
-      }
+      window.location.replace("/pegawai/data-pegawai");
     } catch (error) {
-      console.error("There was an error adding the data:", error);
-      alert("Failed to add data");
+      console.error("Fail to update data: ", error);
     }
   };
 
   return (
-    <DashboardCard title="Tabel Tambah Pegawai">
+    <DashboardCard title="Tabel Edit Pegawai">
       <Box
         component="form"
-        onSubmit={addData}
+        onSubmit={updateData}
         sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}
       >
         <Box display={"flex"} justifyContent={"space-between"}>
@@ -109,9 +119,9 @@ const EditPegawaiTable = (): React.ReactElement => {
               id="nip-input"
               name="nip"
               aria-describedby="nip-helper"
-              onChange={handleInputChange}
-              value={addPegawai.nip}
               type="number"
+              value={pegawai?.nip || ""}
+              onChange={handleEditPegawai}
               required
             />
           </FormControl>
@@ -121,9 +131,9 @@ const EditPegawaiTable = (): React.ReactElement => {
               id="alamat-input"
               name="alamat"
               aria-describedby="alamat-helper"
-              onChange={handleInputChange}
-              value={addPegawai.alamat}
               type="text"
+              value={pegawai?.alamat || ""}
+              onChange={handleEditPegawai}
               required
             />
           </FormControl>
@@ -139,9 +149,9 @@ const EditPegawaiTable = (): React.ReactElement => {
               id="name-input"
               name="Name"
               aria-describedby="name-helper"
-              onChange={handleInputChange}
-              value={addPegawai.Name}
               type="text"
+              value={pegawai?.Name || ""}
+              onChange={handleEditPegawai}
               required
             />
           </FormControl>
@@ -151,9 +161,9 @@ const EditPegawaiTable = (): React.ReactElement => {
               id="email-input"
               name="email"
               aria-describedby="email-helper"
-              value={addPegawai.email}
-              onChange={handleInputChange}
               type="email"
+              value={pegawai?.email || ""}
+              onChange={handleEditPegawai}
               required
             />
           </FormControl>
@@ -171,9 +181,9 @@ const EditPegawaiTable = (): React.ReactElement => {
               id="handphone-input"
               name="handphone"
               aria-describedby="handphone-helper"
-              onChange={handleInputChange}
-              value={addPegawai.handphone}
               type="number"
+              value={pegawai?.handphone || ""}
+              onChange={handleEditPegawai}
               required
             />
           </FormControl>
@@ -185,8 +195,8 @@ const EditPegawaiTable = (): React.ReactElement => {
               label="Select Jabatan"
               helperText="Please select your Jabatan"
               variant="standard"
-              onChange={handleInputChange}
-              value={addPegawai.jabatanId}
+              onChange={handleEditPegawai}
+              value={pegawai?.jabatanId || ""}
             >
               {jabatan.length > 0 ? (
                 jabatan.map((option) => (
@@ -202,8 +212,8 @@ const EditPegawaiTable = (): React.ReactElement => {
             </TextField>
           </FormControl>
         </Box>
-        <Box>
-          <Button type="submit" variant="contained" sx={{ my: "25px" }}>
+        <Box sx={{ marginTop: "20px", textAlign: "right" }}>
+          <Button type="submit" variant="contained">
             Submit
           </Button>
         </Box>
