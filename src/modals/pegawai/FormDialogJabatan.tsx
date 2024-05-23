@@ -8,10 +8,13 @@ import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
 import { addItem } from "../../action/actions";
 
-export default function FormDialogJabatan() {
+interface FormDialogJabatanProps {
+  setItems: React.Dispatch<React.SetStateAction<any[]>>;
+}
+
+const FormDialogJabatan: React.FC<FormDialogJabatanProps> = ({ setItems }) => {
   const [open, setOpen] = useState(false);
   const [addJabatan, setAddJabtan] = useState<string>("");
-  const [items, setItems] = useState<any[]>([]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -37,7 +40,9 @@ export default function FormDialogJabatan() {
     );
 
     if (success) {
+      setItems((prevItems) => [...prevItems, { jabatan }]);
       setAddJabtan("");
+      handleClose();
     }
   };
 
@@ -86,4 +91,6 @@ export default function FormDialogJabatan() {
       </Dialog>
     </>
   );
-}
+};
+
+export default FormDialogJabatan;

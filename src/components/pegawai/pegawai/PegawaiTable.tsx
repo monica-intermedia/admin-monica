@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import {
   Typography,
   Box,
@@ -11,73 +10,37 @@ import {
   Button,
   TextField,
 } from "@mui/material";
-import { IconPlus, IconPrinter } from "@tabler/icons-react";
+import { IconPrinter } from "@tabler/icons-react";
 import DashboardCard from "../../shared/DashboardCard";
 import Link from "next/link";
+import FormDialogPegawai from "../../../modals/pegawai/FormDialogPegawai";
+import { useFetchData, handleDelete } from "../../../action/actions";
 
 interface Jabatan {
   jabatan: string;
 }
 
 interface Staff {
-  pegawaiId: string;
+  id: string;
   nip: string;
-  Name: string;
+  name: string;
   alamat: string;
   email: string;
   handphone: string;
-  jabatan: Jabatan;
+  jabatan?: Jabatan;
 }
 
 const PositionTable = (): React.ReactElement => {
   const [staff, setStaff] = useState<Staff[]>([]);
 
-  const [items, setItems] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/pegawai/pegawai"
-        );
-        setStaff(response.data.data);
-      } catch (error) {
-        console.error("Error fetching position data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const DeleteJabatan = async (pegawaiId: string) => {
-    try {
-      await axios.delete(`http://localhost:8080/pegawai/pegawai/${pegawaiId}`);
-      return true;
-    } catch (error) {
-      console.error("Error deleting jabatan :", error);
-      return false;
-    }
-  };
-
-  const handleDelete = async (pegawaiId: string) => {
-    if (window.confirm("Are you sure you want to delete this pegawai?")) {
-      const isDeleted = await DeleteJabatan(pegawaiId);
-      if (isDeleted) {
-        setStaff(staff.filter((item) => item.pegawaiId != pegawaiId));
-      }
-    }
-  };
+  useFetchData("http://localhost:8080/pegawai/pegawai", setStaff);
 
   return (
     <DashboardCard title="Tabel Pegawai">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <Link href={"/pegawai/data-pegawai/tambah-pegawai"}>
-              <Button variant="contained">
-                <IconPlus />
-              </Button>
-            </Link>
+            <FormDialogPegawai setItems={setStaff} />
             <Button
               variant="contained"
               style={{
@@ -152,7 +115,7 @@ const PositionTable = (): React.ReactElement => {
           </TableHead>
           <TableBody>
             {staff.map((staff, index) => (
-              <TableRow key={staff.pegawaiId}>
+              <TableRow key={staff.id}>
                 <TableCell>
                   <Typography
                     sx={{
@@ -186,6 +149,7 @@ const PositionTable = (): React.ReactElement => {
                     </Box>
                   </Box>
                 </TableCell>
+
                 <TableCell>
                   <Box
                     sx={{
@@ -204,7 +168,7 @@ const PositionTable = (): React.ReactElement => {
                           fontSize: "13px",
                         }}
                       >
-                        {staff.Name}
+                        {staff.name}
                       </Typography>
                     </Box>
                   </Box>
@@ -296,14 +260,14 @@ const PositionTable = (): React.ReactElement => {
                           fontSize: "13px",
                         }}
                       >
-                        {staff.jabatan.jabatan}
+                        {staff.jabatan?.jabatan}
                       </Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Link
-                    href={`/pegawai/data-pegawai/${staff.pegawaiId}`}
+                    href={`/pegawai/data-pegawai/${staff.id}`}
                     style={{ marginRight: "10px" }}
                   >
                     <Button variant="outlined">Edit</Button>
@@ -312,7 +276,13 @@ const PositionTable = (): React.ReactElement => {
                     <Button
                       variant="outlined"
                       color="error"
-                      onClick={() => handleDelete(staff.pegawaiId)}
+                      onClick={() =>
+                        handleDelete(
+                          staff.id,
+                          setStaff,
+                          "http://localhost:8080/pegawai/pegawai"
+                        )
+                      }
                     >
                       Delete
                     </Button>

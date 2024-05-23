@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import {
   Typography,
   Box,
@@ -11,43 +10,28 @@ import {
   Button,
   TextField,
 } from "@mui/material";
-import { IconPlus, IconPrinter } from "@tabler/icons-react";
+import { IconPrinter } from "@tabler/icons-react";
 import DashboardCard from "../../shared/DashboardCard";
-import { handleDelete } from "./action/actionJabatan";
 import Link from "next/link";
 import FormDialogJabatan from "../../../modals/pegawai/FormDialogJabatan";
+import { useFetchData, handleDelete } from "../../../action/actions";
 
 interface Position {
   jabatan: string;
-  jabatanId: string;
+  id: string;
 }
 
 const PositionTable = (): React.ReactElement => {
   const [jabatan, setJabatan] = useState<Position[]>([]);
 
-  const [items, setItems] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/pegawai/jabatan"
-        );
-        setJabatan(response.data.data);
-      } catch (error) {
-        console.error("Error fetching position data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  useFetchData("http://localhost:8080/pegawai/jabatan", setJabatan);
 
   return (
     <DashboardCard title="Tabel Jabatan">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <FormDialogJabatan />
+            <FormDialogJabatan setItems={setJabatan} />
             <Button
               variant="contained"
               style={{
@@ -102,7 +86,7 @@ const PositionTable = (): React.ReactElement => {
           </TableHead>
           <TableBody>
             {jabatan.map((positions, index) => (
-              <TableRow key={positions.jabatanId}>
+              <TableRow key={positions.id}>
                 <TableCell>
                   <Typography
                     sx={{
@@ -138,20 +122,24 @@ const PositionTable = (): React.ReactElement => {
                 </TableCell>
                 <TableCell>
                   <Link
-                    href={`/pegawai/jabatan/${positions.jabatanId}`}
+                    href={`/pegawai/jabatan/${positions.id}`}
                     style={{ marginRight: "10px" }}
                   >
                     <Button variant="outlined">Edit</Button>
                   </Link>
-                  <Link href="#" passHref>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleDelete(positions.jabatanId)}
-                    >
-                      Delete
-                    </Button>
-                  </Link>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() =>
+                      handleDelete(
+                        positions.id!,
+                        setJabatan,
+                        "http://localhost:8080/pegawai/jabatan"
+                      )
+                    }
+                  >
+                    Delete
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

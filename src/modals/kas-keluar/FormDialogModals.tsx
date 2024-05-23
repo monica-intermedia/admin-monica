@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -8,10 +8,35 @@ import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { Box, MenuItem } from "@mui/material";
-import { Height } from "@mui/icons-material";
+import { useFetchData } from "../../action/actions";
+
+interface SupplierData {
+  id: string;
+  name: string;
+}
+
+interface BarangData {
+  id: string;
+  namaBarang: string;
+  harga: number;
+}
 
 export default function FormDialog() {
   const [open, setOpen] = useState(false);
+  const [supplier, setSupplier] = useState<SupplierData[]>([]);
+  const [barang, setBarang] = useState<BarangData[]>([]);
+  const [selectedBarang, setSelectedBarang] = useState<BarangData | null>(null);
+  const [count, setCount] = useState(0);
+  const [totalHarga, setTotalHarga] = useState(0);
+
+  useFetchData("http://localhost:8080/pelanggan/supplier", setSupplier);
+  useFetchData("http://localhost:8080/barang/barang", setBarang);
+
+  useEffect(() => {
+    if (selectedBarang && count >= 0) {
+      setTotalHarga(selectedBarang.harga * count);
+    }
+  }, [selectedBarang, count]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -21,7 +46,11 @@ export default function FormDialog() {
     setOpen(false);
   };
 
-  const [count, setCount] = useState(0);
+  const handleBarangChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedBarangId = event.target.value;
+    const selectedBarangData = barang.find((b) => b.id === selectedBarangId);
+    setSelectedBarang(selectedBarangData || null);
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,25 +63,6 @@ export default function FormDialog() {
     console.log(email);
     handleClose();
   };
-
-  const currencies = [
-    {
-      value: "USD",
-      label: "$",
-    },
-    {
-      value: "EUR",
-      label: "€",
-    },
-    {
-      value: "BTC",
-      label: "฿",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-  ];
 
   return (
     <>
@@ -91,14 +101,13 @@ export default function FormDialog() {
               id="standard-select-currency"
               select
               label="Pilih supplier"
-              defaultValue="EUR"
               variant="standard"
               fullWidth
               sx={{ marginTop: 1 }}
             >
-              {currencies.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {supplier.map((option) => (
+                <MenuItem key={option.id} value={option.id}>
+                  {option.name}
                 </MenuItem>
               ))}
             </TextField>
@@ -106,14 +115,15 @@ export default function FormDialog() {
               id="standard-select-currency"
               select
               label="Pilih Barang"
-              defaultValue="EUR"
+              value={selectedBarang?.id || ""}
+              onChange={handleBarangChange}
               variant="standard"
               fullWidth
               sx={{ marginTop: 1 }}
             >
-              {currencies.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {barang.map((option) => (
+                <MenuItem key={option.id} value={option.id}>
+                  {option.namaBarang}
                 </MenuItem>
               ))}
             </TextField>
@@ -160,6 +170,7 @@ export default function FormDialog() {
                   name="qty"
                   value={count}
                   type="number"
+                  onChange={(e) => setCount(parseInt(e.target.value))}
                   inputProps={{
                     style: {
                       textAlign: "center",
@@ -180,7 +191,7 @@ export default function FormDialog() {
               sx={{ marginTop: 1 }}
             >
               <h3>Total Harga</h3>
-              <h4 style={{ color: "green" }}>Rp. 125.000</h4>
+              <h4 style={{ color: "green" }}>Rp. {totalHarga}</h4>
             </Box>
           </DialogContent>
           <DialogActions sx={{ marginBottom: 2 }}>
