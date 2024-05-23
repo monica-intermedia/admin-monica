@@ -15,6 +15,7 @@ import { IconPlus, IconPrinter } from "@tabler/icons-react";
 import DashboardCard from "../../shared/DashboardCard";
 import { handleDelete } from "./action/actionJabatan";
 import Link from "next/link";
+import FormDialogJabatan from "../../../modals/pegawai/FormDialogJabatan";
 
 interface Position {
   jabatan: string;
@@ -23,6 +24,8 @@ interface Position {
 
 const PositionTable = (): React.ReactElement => {
   const [jabatan, setJabatan] = useState<Position[]>([]);
+
+  const [items, setItems] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,11 +47,7 @@ const PositionTable = (): React.ReactElement => {
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <Link href={"/pegawai/jabatan/tambah-posisi"}>
-              <Button variant="contained">
-                <IconPlus />
-              </Button>
-            </Link>
+            <FormDialogJabatan />
             <Button
               variant="contained"
               style={{

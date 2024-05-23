@@ -95,11 +95,13 @@ const EditPegawaiTable = (): React.ReactElement => {
     };
 
     try {
-      await axios.put(
-        `http://localhost:8080/pegawai/pegawai/${id}`,
-        requestingData
-      );
-      window.location.replace("/pegawai/data-pegawai");
+      await axios
+        .put(`http://localhost:8080/pegawai/pegawai/${id}`, requestingData)
+        .then(() => {
+          if (window.confirm("apakah anda yakin inin menubah ?")) {
+            window.location.replace("/pegawai/data-pegawai");
+          }
+        });
     } catch (error) {
       console.error("Fail to update data: ", error);
     }

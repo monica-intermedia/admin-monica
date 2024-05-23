@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { IconPrinter } from "@tabler/icons-react";
 import {
   Typography,
@@ -13,54 +13,44 @@ import {
 } from "@mui/material";
 import DashboardCard from "../shared/DashboardCard";
 import FormDialog from "../../modals/kas-keluar/FormDialogModals";
+import dayjs from "dayjs";
 
-const products = [
-  {
-    no: 1,
-    nomorTransaksi: "12312111",
-    namaBarang: "Plate Arirang 650x586",
-    qty: 1,
-    harga: 5000000,
-    jumlahHarga: 500000,
-    supplier: "marijaya",
-    deskripsi: "dari sana",
-  },
-  {
-    no: 2,
-    nomorTransaksi: "12312111",
-    namaBarang: "Plate Arirang 650x586",
-    qty: 1,
-    harga: 5000000,
-    jumlahHarga: 500000,
-    supplier: "marijaya",
-    deskripsi: "dari sana",
-  },
-  {
-    no: 3,
-    nomorTransaksi: "12312111",
-    namaBarang: "Plate Arirang 650x586",
-    qty: 1,
-    harga: 5000000,
-    jumlahHarga: 500000,
-    supplier: "marijaya",
-    deskripsi: "dari sana",
-  },
-];
+import { handleDelete, useFetchData } from "../../action/actions";
 
 const BuyInventoryTable = (): React.ReactElement => {
+  interface Supplier {
+    name: string;
+  }
+
+  interface Barang {
+    namaBarang: string;
+  }
+
+  interface Pembelian {
+    id: string;
+    nomorFaktur: string;
+    qty: number;
+    totalHarga: number;
+    isInventory: boolean;
+    tanggal: Date;
+    supplier: Supplier;
+    barang: Barang;
+  }
+
+  const [pembelianBarang, setPembelianBarang] = useState<Pembelian[]>([]);
+
+  useFetchData(
+    "http://localhost:8080/kaskeluar/pembelianbarang",
+    setPembelianBarang
+  );
+
   return (
     <DashboardCard title="Tabel Pembelian Barang">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
             <FormDialog />
-            <Button
-              variant="contained"
-              style={{
-                paddingRight: "20px",
-                paddingLeft: "20px",
-              }}
-            >
+            <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
               <IconPrinter />
             </Button>
           </Box>
@@ -69,8 +59,7 @@ const BuyInventoryTable = (): React.ReactElement => {
             <form>
               <TextField
                 id="search-bar"
-                className="text"
-                label="masukan nama barang"
+                label="Masukkan nama barang"
                 variant="outlined"
                 placeholder="Search..."
                 size="small"
@@ -79,13 +68,7 @@ const BuyInventoryTable = (): React.ReactElement => {
             </form>
           </Box>
         </Box>
-        <Table
-          aria-label="simple table"
-          sx={{
-            whiteSpace: "nowrap",
-            mt: 2,
-          }}
-        >
+        <Table aria-label="simple table" sx={{ whiteSpace: "nowrap", mt: 2 }}>
           <TableHead>
             <TableRow>
               <TableCell>
@@ -95,22 +78,22 @@ const BuyInventoryTable = (): React.ReactElement => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Nomor Transaksi
+                  Nomor Faktur
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Nama Barang
+                  Supplier
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Qty
+                  Barang
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Harga
+                  Qty
                 </Typography>
               </TableCell>
               <TableCell align="right">
@@ -120,12 +103,7 @@ const BuyInventoryTable = (): React.ReactElement => {
               </TableCell>
               <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Supplier
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Deskripsi
+                  Tanggal
                 </Typography>
               </TableCell>
               <TableCell align="right">
@@ -136,48 +114,16 @@ const BuyInventoryTable = (): React.ReactElement => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.namaBarang}>
+            {pembelianBarang.map((pembelian, index) => (
+              <TableRow key={pembelian.id}>
                 <TableCell>
-                  <Typography
-                    sx={{
-                      fontSize: "15px",
-                      fontWeight: "500",
-                    }}
-                  >
-                    {product.no}
+                  <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
+                    {index + 1}
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Box>
-                      <Typography
-                        variant="subtitle2"
-                        fontWeight={600}
-                      ></Typography>
-                      <Typography
-                        color="textSecondary"
-                        sx={{
-                          fontSize: "13px",
-                        }}
-                      >
-                        {product.nomorTransaksi}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Typography
-                    color="textSecondary"
-                    variant="subtitle2"
-                    fontWeight={400}
-                  >
-                    {product.namaBarang}
+                  <Typography color="textSecondary" sx={{ fontSize: "13px" }}>
+                    {pembelian.nomorFaktur}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -186,7 +132,7 @@ const BuyInventoryTable = (): React.ReactElement => {
                     variant="subtitle2"
                     fontWeight={400}
                   >
-                    {product.qty}
+                    {pembelian.supplier?.name}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -195,45 +141,51 @@ const BuyInventoryTable = (): React.ReactElement => {
                     variant="subtitle2"
                     fontWeight={400}
                   >
-                    {product.harga}
+                    {pembelian.barang?.namaBarang}
                   </Typography>
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <Typography
                     color="textSecondary"
                     variant="subtitle2"
                     fontWeight={400}
                   >
-                    {product.jumlahHarga}
+                    {pembelian.qty}
                   </Typography>
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <Typography
                     color="textSecondary"
                     variant="subtitle2"
                     fontWeight={400}
                   >
-                    {product.supplier}
+                    {pembelian.totalHarga}
                   </Typography>
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <Typography
                     color="textSecondary"
                     variant="subtitle2"
                     fontWeight={400}
                   >
-                    {product.deskripsi}
+                    {dayjs(pembelian.tanggal).format("DD-MM-YYYY")}
                   </Typography>
                 </TableCell>
-                <TableCell>
-                  <Button
-                    href="#"
-                    variant="outlined"
-                    style={{ marginRight: "10px" }}
-                  >
+                <TableCell align="right">
+                  <Button variant="outlined" sx={{ marginRight: "10px" }}>
                     Edit
                   </Button>
-                  <Button href="#" variant="outlined" color="error">
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() =>
+                      handleDelete(
+                        pembelian.id!,
+                        setPembelianBarang,
+                        "http://localhost:8080/kaskeluar/pembelianbarang"
+                      )
+                    }
+                  >
                     Delete
                   </Button>
                 </TableCell>

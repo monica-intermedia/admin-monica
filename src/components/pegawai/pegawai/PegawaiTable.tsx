@@ -32,6 +32,8 @@ interface Staff {
 const PositionTable = (): React.ReactElement => {
   const [staff, setStaff] = useState<Staff[]>([]);
 
+  const [items, setItems] = useState<any[]>([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {

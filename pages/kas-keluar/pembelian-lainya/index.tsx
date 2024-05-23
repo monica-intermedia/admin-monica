@@ -1,4 +1,3 @@
-import React from "react";
 import type { ReactElement } from "react";
 import OtherBuyTable from "../../../src/components/kas-keluar/OtherBuyTable";
 import PageContainer from "../../../src/components/container/PageContainer";

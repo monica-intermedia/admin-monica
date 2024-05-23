@@ -1,58 +1,45 @@
-"use client";
-
 import { useState } from "react";
 import DashboardCard from "../../shared/DashboardCard";
 import { Box, FormControl, InputLabel, Input, Button } from "@mui/material";
-import axios from "axios";
-
-type Jabatan = {
-  jabatanId?: string;
-  jabatan: string;
-};
+import { addItem } from "../../../action/actions";
 
 const AddPositionTable = (): React.ReactElement => {
-  const [addJabatan, setAddJabtan] = useState<Jabatan>({
-    jabatanId: "",
-    jabatan: "",
-  });
+  const [addJabatan, setAddJabtan] = useState<string>("");
+  const [items, setItems] = useState<any[]>([]);
 
-  const handleJabatanInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAddJabtan({ ...addJabatan, jabatan: e.target.value });
+  const requestData = {
+    jabatan: addJabatan,
   };
 
-  const addData = async () => {
-    const requestingData = {
-      jabatan: addJabatan.jabatan,
-    };
-
-    try {
-      await axios({
-        method: "POST",
-        url: "http://localhost:8080/pegawai/jabatan",
-        data: requestingData,
-      });
-      window.confirm("Data berhasil ditambah");
-      window.location.replace("/pegawai/jabatan");
-    } catch (error) {
-      console.error("There was an error adding the data:", error);
-      alert("Failed to add data");
-    }
+  const handleSubmit = async () => {
+    await addItem(
+      "http://localhost:8080/pegawai/jabatan",
+      setItems,
+      requestData
+    );
+    setAddJabtan("");
   };
+
   return (
-    <DashboardCard title="Tabel Tambah  Jabatan">
+    <DashboardCard title="Tabel Tambah Jabatan">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <FormControl sx={{ width: "45%" }}>
-            <InputLabel htmlFor="my-input">Masukan jabatan</InputLabel>
+            <InputLabel htmlFor="my-input">Masukkan jabatan</InputLabel>
             <Input
               id="my-input"
               aria-describedby="my-helper-text"
-              onChange={handleJabatanInput}
+              value={addJabatan}
+              onChange={(e) => setAddJabtan(e.target.value)}
             />
           </FormControl>
         </Box>
         <Box>
-          <Button variant="contained" sx={{ my: "18px" }} onClick={addData}>
+          <Button
+            variant="contained"
+            sx={{ my: "18px" }}
+            onClick={handleSubmit}
+          >
             Submit
           </Button>
         </Box>

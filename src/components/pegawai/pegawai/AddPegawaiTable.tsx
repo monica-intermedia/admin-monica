@@ -202,7 +202,7 @@ const AddPegawaiTable = (): React.ReactElement => {
             </TextField>
           </FormControl>
         </Box>
-        <Box>
+        <Box flex={"flex"} textAlign={"right"}>
           <Button type="submit" variant="contained" sx={{ my: "25px" }}>
             Submit
           </Button>
