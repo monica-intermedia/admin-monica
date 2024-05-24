@@ -10,12 +10,12 @@ import Link from "next/link";
 import { Box, MenuItem } from "@mui/material";
 import { useFetchData } from "../../action/actions";
 
-interface SupplierData {
+interface SupplierDataProps {
   id: string;
   name: string;
 }
 
-interface BarangData {
+interface BarangDataProps {
   id: string;
   namaBarang: string;
   harga: number;
@@ -23,11 +23,22 @@ interface BarangData {
 
 export default function FormDialog() {
   const [open, setOpen] = useState(false);
-  const [supplier, setSupplier] = useState<SupplierData[]>([]);
-  const [barang, setBarang] = useState<BarangData[]>([]);
-  const [selectedBarang, setSelectedBarang] = useState<BarangData | null>(null);
+  const [supplier, setSupplier] = useState<SupplierDataProps[]>([]);
+  const [barang, setBarang] = useState<BarangDataProps[]>([]);
+  const [selectedBarang, setSelectedBarang] = useState<BarangDataProps | null>(
+    null
+  );
   const [count, setCount] = useState(0);
   const [totalHarga, setTotalHarga] = useState(0);
+  const [pembelianBarang, setPembelianBarang] = useState({
+    nomorFaktur: "",
+    qty: "",
+    totalHarga: "",
+    isInventory: "",
+    tanggal: "",
+    id_supplier: "",
+    id_barang: "",
+  });
 
   useFetchData("http://localhost:8080/pelanggan/supplier", setSupplier);
   useFetchData("http://localhost:8080/barang/barang", setBarang);
@@ -62,6 +73,13 @@ export default function FormDialog() {
     const email = formJson.email;
     console.log(email);
     handleClose();
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPembelianBarang({
+      ...pembelianBarang,
+      [e.target.name]: e.target.value,
+    });
   };
 
   return (

@@ -17,7 +17,7 @@ import dayjs from "dayjs";
 
 import { handleDelete, useFetchData } from "../../action/actions";
 
-const BuyInventoryTable = (): React.ReactElement => {
+const BuyInventoryTable = (): any => {
   interface Supplier {
     name: string;
   }
