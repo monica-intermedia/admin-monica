@@ -1,5 +1,4 @@
-import React from "react";
-import { IconPlus, IconPrinter } from "@tabler/icons-react";
+import React, { useState } from "react";
 import {
   Typography,
   Box,
@@ -9,68 +8,51 @@ import {
   TableHead,
   TableRow,
   Button,
-  Divider,
   TextField,
 } from "@mui/material";
-import DashboardCard from "../../../src/components/shared/DashboardCard";
+import { IconPrinter } from "@tabler/icons-react";
+import DashboardCard from "../shared/DashboardCard";
+import Link from "next/link";
+import { useFetchData, handleDelete } from "../../action/actions";
+import FormDialogSupplier from "../../modals/pelanggan/FormDialogSupplier";
 
-const products = [
-  {
-    id: "1",
-    name: "Sunil Joshi",
-    post: "Web Designer",
-    pname: "Elite Admin",
-    priority: "Low",
-    pbg: "primary.main",
-    budget: "3.9",
-  },
-];
+interface SupplierProps {
+  id: string;
+  name: string;
+  alamat: string;
+  email: string;
+  handphone: string;
+}
 
-const salary = [
-  {
-    no: 1,
-    nama: "Sunil Joshi",
-    jabatan: "Web Designer",
-    gajiPokok: "3000000",
-    potongan: "-",
-    bonus: "-",
-    totalGaji: "3000000",
-  },
-];
+const PositionTable = (): React.ReactElement => {
+  const [supplier, setSupplier] = useState<SupplierProps[]>([]);
 
-const SalaryTable = () => {
+  useFetchData("http://localhost:8080/pelanggan/supplier", setSupplier);
+
   return (
-    <DashboardCard title="Tabel Gaji Karyawan">
+    <DashboardCard title="Tabel Jabatan">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
-          <Box>
-            <Button
-              variant="contained"
-              style={{
-                marginRight: "15px",
-                paddingRight: "20px",
-                paddingLeft: "20px",
-              }}
-            >
-              <IconPlus />
-            </Button>
+          <Box display="flex">
+            <FormDialogSupplier setItems={setSupplier} />
             <Button
               variant="contained"
               style={{
                 paddingRight: "20px",
                 paddingLeft: "20px",
+                marginLeft: "20px",
               }}
             >
               <IconPrinter />
             </Button>
-            <Divider orientation="vertical" variant="middle" flexItem />
           </Box>
           <Box>
+            <br />
             <form>
               <TextField
                 id="search-bar"
                 className="text"
-                label="masukan nama karyawan"
+                label="masukan nama jabatan"
                 variant="outlined"
                 placeholder="Search..."
                 size="small"
@@ -90,44 +72,39 @@ const SalaryTable = () => {
             <TableRow>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Nomor
+                  No.
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Nama
+                  Nama Supplier
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Jabatan
+                  Alamat
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Gaji Pokok
+                  Email
                 </Typography>
               </TableCell>
-              <TableCell align="right">
+              <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Potongan
+                  Handphone
                 </Typography>
               </TableCell>
-              <TableCell align="right">
+              <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Bonus
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Total Gaji
+                  Action
                 </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {salary.map((salary) => (
-              <TableRow>
+            {supplier.map((options, index) => (
+              <TableRow key={options.id}>
                 <TableCell>
                   <Typography
                     sx={{
@@ -135,7 +112,7 @@ const SalaryTable = () => {
                       fontWeight: "500",
                     }}
                   >
-                    {salary.no}
+                    {index + 1}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -147,60 +124,70 @@ const SalaryTable = () => {
                   >
                     <Box>
                       <Typography
+                        variant="subtitle2"
+                        fontWeight={600}
+                      ></Typography>
+                      <Typography
                         color="textSecondary"
                         sx={{
                           fontSize: "13px",
                         }}
                       >
-                        {salary.nama}
+                        {options.name}
                       </Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Typography
-                    color="textSecondary"
-                    variant="subtitle2"
-                    fontWeight={400}
+                    sx={{
+                      fontSize: "15px",
+                      fontWeight: "500",
+                    }}
                   >
-                    {salary.jabatan}
+                    {options.alamat}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Typography
-                    color="textSecondary"
-                    variant="subtitle2"
-                    fontWeight={400}
+                    sx={{
+                      fontSize: "15px",
+                      fontWeight: "500",
+                    }}
                   >
-                    {salary.gajiPokok}
+                    {options.email}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Typography
-                    color="textSecondary"
-                    variant="subtitle2"
-                    fontWeight={400}
+                    sx={{
+                      fontSize: "15px",
+                      fontWeight: "500",
+                    }}
                   >
-                    {salary.potongan}
+                    {options.handphone}
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography
-                    color="textSecondary"
-                    variant="subtitle2"
-                    fontWeight={400}
+                  <Link
+                    href={`/pegawai/jabatan/${options.id}`}
+                    style={{ marginRight: "10px" }}
                   >
-                    {salary.bonus}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography
-                    color="textSecondary"
-                    variant="subtitle2"
-                    fontWeight={400}
+                    <Button variant="outlined">Edit</Button>
+                  </Link>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() =>
+                      handleDelete(
+                        options.id!,
+                        setSupplier,
+                        "http://localhost:8080/pelanggan/supplier"
+                      )
+                    }
                   >
-                    {salary.totalGaji}
-                  </Typography>
+                    Delete
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -211,4 +198,4 @@ const SalaryTable = () => {
   );
 };
 
-export default SalaryTable;
+export default PositionTable;

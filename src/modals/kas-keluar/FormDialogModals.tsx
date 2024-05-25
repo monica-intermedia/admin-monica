@@ -6,9 +6,12 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
-import Link from "next/link";
 import { Box, MenuItem } from "@mui/material";
-import { useFetchData } from "../../action/actions";
+import { useFetchData, addItem } from "../../action/actions";
+
+interface FormDialogProps {
+  onAddItem: (newItem: any) => void;
+}
 
 interface SupplierDataProps {
   id: string;
@@ -21,7 +24,7 @@ interface BarangDataProps {
   harga: number;
 }
 
-export default function FormDialog() {
+const FormDialog: React.FC<FormDialogProps> = ({ onAddItem }) => {
   const [open, setOpen] = useState(false);
   const [supplier, setSupplier] = useState<SupplierDataProps[]>([]);
   const [barang, setBarang] = useState<BarangDataProps[]>([]);
@@ -30,7 +33,7 @@ export default function FormDialog() {
   );
   const [count, setCount] = useState(0);
   const [totalHarga, setTotalHarga] = useState(0);
-  const [pembelianBarang, setPembelianBarang] = useState({
+  const [pembelianBarang, setPembelianBarang] = useState<any>({
     nomorFaktur: "",
     qty: "",
     totalHarga: "",
@@ -61,21 +64,39 @@ export default function FormDialog() {
     const selectedBarangId = event.target.value;
     const selectedBarangData = barang.find((b) => b.id === selectedBarangId);
     setSelectedBarang(selectedBarangData || null);
+    setPembelianBarang((prevState: any) => ({
+      ...prevState,
+      id_barang: selectedBarangId,
+    }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const formJson: { [key: string]: any } = {};
+
     formData.forEach((value, key) => {
       formJson[key] = value;
     });
-    const email = formJson.email;
-    console.log(email);
-    handleClose();
+
+    formJson.qty = count;
+    formJson.totalHarga = totalHarga;
+
+    console.log(formJson);
+
+    const success = await addItem(
+      "http://localhost:8080/kaskeluar/pembelianbarang",
+      setPembelianBarang,
+      formJson
+    );
+
+    if (success) {
+      onAddItem(formJson); // Add this line
+      handleClose();
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: any) => {
     setPembelianBarang({
       ...pembelianBarang,
       [e.target.name]: e.target.value,
@@ -108,20 +129,29 @@ export default function FormDialog() {
               autoFocus
               required
               margin="dense"
-              id="name"
-              name="Nomor Faktur"
+              id="nomorFaktur"
+              name="nomorFaktur"
               label="Masukan nomor faktur"
               type="text"
               fullWidth
               variant="standard"
+              onChange={handleChange}
             />
             <TextField
-              id="standard-select-currency"
+              id="standard-select-supplier"
               select
               label="Pilih supplier"
               variant="standard"
               fullWidth
               sx={{ marginTop: 1 }}
+              onChange={(e) => {
+                handleChange(e);
+                setPembelianBarang((prevState: any) => ({
+                  ...prevState,
+                  id_supplier: e.target.value,
+                }));
+              }}
+              name="id_supplier"
             >
               {supplier.map((option) => (
                 <MenuItem key={option.id} value={option.id}>
@@ -130,7 +160,7 @@ export default function FormDialog() {
               ))}
             </TextField>
             <TextField
-              id="standard-select-currency"
+              id="standard-select-barang"
               select
               label="Pilih Barang"
               value={selectedBarang?.id || ""}
@@ -138,6 +168,7 @@ export default function FormDialog() {
               variant="standard"
               fullWidth
               sx={{ marginTop: 1 }}
+              name="id_barang"
             >
               {barang.map((option) => (
                 <MenuItem key={option.id} value={option.id}>
@@ -149,11 +180,25 @@ export default function FormDialog() {
               autoFocus
               required
               margin="dense"
-              id="name"
+              id="tanggal"
               name="tanggal"
               type="date"
               fullWidth
               variant="standard"
+              onChange={handleChange}
+            />
+            <TextField
+              autoFocus
+              required
+              margin="dense"
+              id="isInventory"
+              name="isInventory"
+              type="text"
+              fullWidth
+              defaultValue={true}
+              variant="standard"
+              onChange={handleChange}
+              style={{ display: "none" }}
             />
             <Box
               display={"flex"}
@@ -184,11 +229,18 @@ export default function FormDialog() {
                   autoFocus
                   required
                   margin="dense"
-                  id="name"
+                  id="qty"
                   name="qty"
                   value={count}
                   type="number"
-                  onChange={(e) => setCount(parseInt(e.target.value))}
+                  onChange={(e) => {
+                    const newCount = parseInt(e.target.value);
+                    setCount(newCount);
+                    setPembelianBarang((prevState: any) => ({
+                      ...prevState,
+                      qty: newCount,
+                    }));
+                  }}
                   inputProps={{
                     style: {
                       textAlign: "center",
@@ -213,15 +265,13 @@ export default function FormDialog() {
             </Box>
           </DialogContent>
           <DialogActions sx={{ marginBottom: 2 }}>
-            <Link href={"#"} passHref>
-              <Button onClick={handleClose}>Cancel</Button>
-            </Link>
-            <Link href={"/kas-keluar/pembelian-barang"}>
-              <Button type="submit">Submit</Button>
-            </Link>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button type="submit">Submit</Button>
           </DialogActions>
         </form>
       </Dialog>
     </>
   );
-}
+};
+
+export default FormDialog;

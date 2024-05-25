@@ -44,12 +44,16 @@ const BuyInventoryTable = (): any => {
     setPembelianBarang
   );
 
+  const addItemHandler = (newItem: any) => {
+    setPembelianBarang((prevItems) => [...prevItems, newItem]);
+  };
+
   return (
     <DashboardCard title="Tabel Pembelian Barang">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <FormDialog />
+            <FormDialog onAddItem={addItemHandler} />
             <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
               <IconPrinter />
             </Button>

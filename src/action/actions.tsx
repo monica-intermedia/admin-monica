@@ -26,12 +26,20 @@ export const handleDelete = async (
 
 export const addItem = async (
   link: string,
-  setItems: Dispatch<React.SetStateAction<any[]>>,
+  setItems: Dispatch<SetStateAction<any[]>>,
   requestingData: any
 ) => {
   try {
     const response = await axios.post(link, requestingData);
-    setItems((prevItems) => prevItems.concat(response.data));
+
+    if (response.status !== 200) {
+      throw new Error(response.data.message || "Failed to add item");
+    }
+
+    const result = response.data;
+    setItems((prevItems) =>
+      Array.isArray(prevItems) ? prevItems.concat(result) : [result]
+    );
     return true;
   } catch (error) {
     console.error("Error adding item:", error);
