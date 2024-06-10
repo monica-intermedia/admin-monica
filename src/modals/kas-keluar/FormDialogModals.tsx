@@ -7,11 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
 import { Box, MenuItem } from "@mui/material";
-import { useFetchData, addItem } from "../../action/actions";
-
-interface FormDialogProps {
-  onAddItem: (newItem: any) => void;
-}
+import axios from "axios";
 
 interface SupplierDataProps {
   id: string;
@@ -24,33 +20,13 @@ interface BarangDataProps {
   harga: number;
 }
 
-const FormDialog: React.FC<FormDialogProps> = ({ onAddItem }) => {
+const FormDialog: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [supplier, setSupplier] = useState<SupplierDataProps[]>([]);
   const [barang, setBarang] = useState<BarangDataProps[]>([]);
   const [selectedBarang, setSelectedBarang] = useState<BarangDataProps | null>(
     null
   );
-  const [count, setCount] = useState(0);
-  const [totalHarga, setTotalHarga] = useState(0);
-  const [pembelianBarang, setPembelianBarang] = useState<any>({
-    nomorFaktur: "",
-    qty: "",
-    totalHarga: "",
-    isInventory: "",
-    tanggal: "",
-    id_supplier: "",
-    id_barang: "",
-  });
-
-  useFetchData("http://localhost:8080/pelanggan/supplier", setSupplier);
-  useFetchData("http://localhost:8080/barang/barang", setBarang);
-
-  useEffect(() => {
-    if (selectedBarang && count >= 0) {
-      setTotalHarga(selectedBarang.harga * count);
-    }
-  }, [selectedBarang, count]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -60,14 +36,65 @@ const FormDialog: React.FC<FormDialogProps> = ({ onAddItem }) => {
     setOpen(false);
   };
 
+  const [count, setCount] = useState(0);
+  const [totalHarga, setTotalHarga] = useState(0);
+  const [pembelianBarang, setPembelianBarang] = useState({
+    nomorFaktur: "",
+    qty: 0,
+    totalHarga: 0,
+    isInventory: true,
+    tanggal: "",
+    id_supplier: "",
+    id_barang: "",
+  });
+
+  useEffect(() => {
+    const fetchSupplierData = async () => {
+      const response = await axios.get(
+        "http://localhost:8080/pelanggan/supplier"
+      );
+      setSupplier(response.data.data);
+    };
+    fetchSupplierData();
+  }, []);
+
+  useEffect(() => {
+    const fetchBarangData = async () => {
+      const response = await axios.get("http://localhost:8080/barang/barang");
+      setBarang(response.data.data);
+    };
+    fetchBarangData();
+  }, []);
+
+  useEffect(() => {
+    if (selectedBarang && count >= 0) {
+      setTotalHarga(selectedBarang.harga * count);
+      setPembelianBarang((prevState) => ({
+        ...prevState,
+        totalHarga: selectedBarang.harga * count,
+        qty: count,
+      }));
+    }
+  }, [selectedBarang, count]);
+
   const handleBarangChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedBarangId = event.target.value;
     const selectedBarangData = barang.find((b) => b.id === selectedBarangId);
     setSelectedBarang(selectedBarangData || null);
-    setPembelianBarang((prevState: any) => ({
+    setPembelianBarang((prevState) => ({
       ...prevState,
       id_barang: selectedBarangId,
     }));
+  };
+
+  const addItem = async (url: string, data: any) => {
+    try {
+      const response = await axios.post(url, data);
+      return response.status === 200 || response.status === 201;
+    } catch (error) {
+      console.error("Error adding item:", error);
+      return false;
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -82,25 +109,28 @@ const FormDialog: React.FC<FormDialogProps> = ({ onAddItem }) => {
     formJson.qty = count;
     formJson.totalHarga = totalHarga;
 
-    console.log(formJson);
+    console.log("Submitting form data:", formJson);
 
     const success = await addItem(
       "http://localhost:8080/kaskeluar/pembelianbarang",
-      setPembelianBarang,
       formJson
     );
 
     if (success) {
-      onAddItem(formJson); // Add this line
+      window.alert("Pembelian barang berhasil ditambahkan!");
       handleClose();
+      window.location.replace("/kas-keluar/pembelian-barang");
+    } else {
+      window.alert("Gagal menambahkan data");
     }
   };
 
-  const handleChange = (e: any) => {
-    setPembelianBarang({
-      ...pembelianBarang,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPembelianBarang((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   return (
@@ -144,13 +174,7 @@ const FormDialog: React.FC<FormDialogProps> = ({ onAddItem }) => {
               variant="standard"
               fullWidth
               sx={{ marginTop: 1 }}
-              onChange={(e) => {
-                handleChange(e);
-                setPembelianBarang((prevState: any) => ({
-                  ...prevState,
-                  id_supplier: e.target.value,
-                }));
-              }}
+              onChange={handleChange}
               name="id_supplier"
             >
               {supplier.map((option) => (
@@ -187,19 +211,6 @@ const FormDialog: React.FC<FormDialogProps> = ({ onAddItem }) => {
               variant="standard"
               onChange={handleChange}
             />
-            <TextField
-              autoFocus
-              required
-              margin="dense"
-              id="isInventory"
-              name="isInventory"
-              type="text"
-              fullWidth
-              defaultValue={true}
-              variant="standard"
-              onChange={handleChange}
-              style={{ display: "none" }}
-            />
             <Box
               display={"flex"}
               alignItems={"center"}
@@ -226,7 +237,6 @@ const FormDialog: React.FC<FormDialogProps> = ({ onAddItem }) => {
                   <h1>-</h1>
                 </Button>
                 <TextField
-                  autoFocus
                   required
                   margin="dense"
                   id="qty"
@@ -234,12 +244,8 @@ const FormDialog: React.FC<FormDialogProps> = ({ onAddItem }) => {
                   value={count}
                   type="number"
                   onChange={(e) => {
-                    const newCount = parseInt(e.target.value);
+                    const newCount = parseInt(e.target.value, 10);
                     setCount(newCount);
-                    setPembelianBarang((prevState: any) => ({
-                      ...prevState,
-                      qty: newCount,
-                    }));
                   }}
                   inputProps={{
                     style: {

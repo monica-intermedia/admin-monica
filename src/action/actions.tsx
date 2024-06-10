@@ -1,7 +1,25 @@
 import axios from "axios";
 import { Dispatch, SetStateAction, useEffect } from "react";
 
-const deleteItem = async (id: string, link: string) => {
+export const useFetchData = (
+  link: string,
+  setItems: Dispatch<React.SetStateAction<any[]>>
+) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(link);
+        console.log("Fetched data:", response.data.data); // Add this lin
+        setItems(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [link, setItems]);
+};
+
+export const deleteItem = async (id: string, link: string) => {
   try {
     await axios.delete(`${link}/${id}`);
     return true;
@@ -24,42 +42,15 @@ export const handleDelete = async (
   }
 };
 
-export const addItem = async (
-  link: string,
-  setItems: Dispatch<SetStateAction<any[]>>,
-  requestingData: any
-) => {
+export const addItem = async (link: string, requestingData: any) => {
   try {
     const response = await axios.post(link, requestingData);
-
     if (response.status !== 200) {
       throw new Error(response.data.message || "Failed to add item");
     }
-
-    const result = response.data;
-    setItems((prevItems) =>
-      Array.isArray(prevItems) ? prevItems.concat(result) : [result]
-    );
-    return true;
+    return response.data;
   } catch (error) {
     console.error("Error adding item:", error);
-    return false;
+    return null;
   }
-};
-
-export const useFetchData = (
-  link: string,
-  setItems: Dispatch<React.SetStateAction<any[]>>
-) => {
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(link);
-        setItems(response.data.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, [link, setItems]);
 };
