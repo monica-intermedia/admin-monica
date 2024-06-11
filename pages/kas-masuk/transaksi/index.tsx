@@ -1,12 +1,12 @@
 import type { ReactElement } from "react";
-import OtherBuyTable from "../../../src/components/kas-keluar/OtherBuyTable";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
+import TransaksiTable from "../../../src/components/kas-masuk/TransaksiTable";
 
 const Index = () => {
   return (
     <PageContainer title="pembelian barang" description="this is Sample page">
-      <OtherBuyTable />
+      <TransaksiTable />
     </PageContainer>
   );
 };

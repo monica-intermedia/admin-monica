@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -42,7 +42,7 @@ const FormPembelianLainya = () => {
         "http://localhost:8080/kaskeluar/pembelianlainya",
         pembelianLainya
       );
-      console.log(response.data);
+      console.log(response.data.data);
       window.alert("Pembelian lainya berhasil ditambahkan!");
 
       const fetchData = async () => {

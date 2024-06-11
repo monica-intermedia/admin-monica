@@ -68,8 +68,7 @@ const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
 
     const success = await addItem(
       "http://localhost:8080/pelanggan/supplier",
-      setItems,
-      supplier
+      setItems
     );
 
     if (success) {

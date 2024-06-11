@@ -16,7 +16,7 @@ import dayjs from "dayjs";
 import axios from "axios";
 import FormTransaksiModals from "../../modals/kas-masuk/FormTransaksiModals";
 
-const TransaksiTable = (): any => {
+const DataTransaksiTable = (): any => {
   interface Pembelian {
     id: string;
     namaKoran: string;
@@ -37,7 +37,7 @@ const TransaksiTable = (): any => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
-        "http://localhost:8080/penjualan/transaksi"
+        "http://localhost:8080/penjualan/datatransaksi"
       );
       setTransaksi(response.data.data);
     };
@@ -99,42 +99,42 @@ const TransaksiTable = (): any => {
                   Jumlah Halaman
                 </Typography>
               </TableCell>
-              <TableCell align="left">
+              <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
                   Jumlah Warna
                 </Typography>
               </TableCell>
-              <TableCell align="left">
+              <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
                   Jumlah Plate
                 </Typography>
               </TableCell>
-              <TableCell align="left">
+              <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
                   Harga
                 </Typography>
               </TableCell>
-              <TableCell align="left">
+              <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
                   Total Harga
                 </Typography>
               </TableCell>
-              <TableCell align="left">
+              <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
                   Tanggal
                 </Typography>
               </TableCell>
-              <TableCell align="left">
+              <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
                   Status
                 </Typography>
               </TableCell>
-              {/* <TableCell align="left">
+              <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
                   file
                 </Typography>
-              </TableCell> */}
-              <TableCell align="left">
+              </TableCell>
+              <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
                   Action
                 </Typography>
@@ -161,7 +161,7 @@ const TransaksiTable = (): any => {
                     </Typography>
                   </TableCell>
 
-                  <TableCell align="left">
+                  <TableCell align="right">
                     <Typography
                       color="textSecondary"
                       variant="subtitle2"
@@ -170,7 +170,7 @@ const TransaksiTable = (): any => {
                       {option.jumlahWarna}
                     </Typography>
                   </TableCell>
-                  <TableCell align="left">
+                  <TableCell align="right">
                     <Typography
                       color="textSecondary"
                       variant="subtitle2"
@@ -179,7 +179,7 @@ const TransaksiTable = (): any => {
                       {option.jumlahPlate}
                     </Typography>
                   </TableCell>
-                  <TableCell align="left">
+                  <TableCell align="right">
                     <Typography
                       color="textSecondary"
                       variant="subtitle2"
@@ -188,7 +188,7 @@ const TransaksiTable = (): any => {
                       {option.harga}
                     </Typography>
                   </TableCell>
-                  <TableCell align="left">
+                  <TableCell align="right">
                     <Typography
                       color="textSecondary"
                       variant="subtitle2"
@@ -197,7 +197,7 @@ const TransaksiTable = (): any => {
                       {option.totalHarga}
                     </Typography>
                   </TableCell>
-                  <TableCell align="left">
+                  <TableCell align="right">
                     <Typography
                       color="textSecondary"
                       variant="subtitle2"
@@ -206,7 +206,7 @@ const TransaksiTable = (): any => {
                       {dayjs(option.tanggal).format("DD-MM-YYYY")}
                     </Typography>
                   </TableCell>
-                  <TableCell align="left">
+                  <TableCell align="right">
                     <Typography
                       color="textSecondary"
                       variant="subtitle2"
@@ -215,7 +215,7 @@ const TransaksiTable = (): any => {
                       {option.status}
                     </Typography>
                   </TableCell>
-                  {/* <TableCell align="left">
+                  <TableCell align="right">
                     <Typography
                       color="textSecondary"
                       variant="subtitle2"
@@ -223,15 +223,17 @@ const TransaksiTable = (): any => {
                     >
                       {option.file}
                     </Typography>
-                  </TableCell> */}
-                  <TableCell align="center">
+                  </TableCell>
+                  <TableCell align="right">
+                    <Button variant="outlined" sx={{ marginRight: "10px" }}>
+                      Edit
+                    </Button>
                     <Button
-                      variant="contained"
-                      color="success"
+                      variant="outlined"
+                      color="error"
                       onClick={() => deleteItem(option.id!)}
-                      sx={{ borderRadius: "16px" }}
                     >
-                      v
+                      Delete
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -250,4 +252,4 @@ const TransaksiTable = (): any => {
   );
 };
 
-export default TransaksiTable;
+export default DataTransaksiTable;

@@ -37,7 +37,7 @@ const OtherBuyTable = (): any => {
       setPembelianLainya(response.data.data);
     };
     fetchData();
-  });
+  }, []);
 
   const deleteItem = async (id: string) => {
     try {
