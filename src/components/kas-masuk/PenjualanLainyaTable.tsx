@@ -14,45 +14,30 @@ import {
 import DashboardCard from "../shared/DashboardCard";
 import dayjs from "dayjs";
 import axios from "axios";
-import { HiCheck } from "react-icons/hi";
-import FormTransaksiModals from "../../modals/kas-masuk/FormTransaksiModals";
+import FormOtherSellModals from "../../modals/kas-masuk/FormOtherSellModals";
 
-const TransaksiTable = (): any => {
-  interface Pembelian {
+const OthersaleTable = (): any => {
+  interface PenjualanProps {
     id: string;
-    namaKoran: string;
-    keterangan: string;
-    eksemplar: number;
-    jumlahHalaman: number;
-    jumlahWarna: number;
-    jumlahPlate: number;
-    harga: number;
-    totalHarga: number;
-    status: string;
-    file: string;
+    kodePenjualan: string;
+    namaPenjualan: string;
     tanggal: Date;
+    totalHarga: number;
+    keterangan: string;
   }
 
-  const [transaksi, setTransaksi] = useState<Pembelian[]>([]);
+  const [penjualanLainya, setPenjualanLainya] = useState<PenjualanProps[]>([]);
 
   const fetchData = async () => {
     const response = await axios.get(
-      "http://localhost:8080/penjualan/transaksi"
+      "http://localhost:8080/kasmasuk/penjualanlainya"
     );
-    setTransaksi(response.data.data);
+    setPenjualanLainya(response.data.data);
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
-
-  const statusDisplay = (status: string) => {
-    if (status === "belum-dicetak") {
-      return "error";
-    } else {
-      return "success";
-    }
-  };
+  });
 
   const deleteItem = async (id: string) => {
     try {
@@ -60,37 +45,21 @@ const TransaksiTable = (): any => {
         "Are you sure you want to delete this item?"
       );
       if (confirmed) {
-        await axios.delete(`http://localhost:8080/penjualan/transaksi/${id}`);
+        await axios.delete(
+          `http://localhost:8080/kasmasuk/penjualanlainya/${id}`
+        );
       }
     } catch (error) {
       console.error("Error deleting item:", error);
     }
   };
 
-  const checklist = async (id: string) => {
-    try {
-      const confirmed = window.confirm(
-        "Are you sure you want to update this item?"
-      );
-      if (confirmed) {
-        await axios.put(`http://localhost:8080/penjualan/transaksi/${id}`, {
-          status: "sudah-dicetak",
-          isValid: true,
-        });
-        fetchData();
-      }
-    } catch (error) {
-      console.error("Error updating item:", error);
-      window.alert("Failed to update item");
-    }
-  };
-
   return (
-    <DashboardCard title="Tabel Transaksi">
+    <DashboardCard title="Tabel Pembelian Barang">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <FormTransaksiModals />
+            <FormOtherSellModals />
             <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
               <IconPrinter />
             </Button>
@@ -119,45 +88,30 @@ const TransaksiTable = (): any => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Nama Koran
+                  Kode Penjualan
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Jumlah Halaman
+                  Nama Penjualan
                 </Typography>
               </TableCell>
-              <TableCell align="left">
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Jumlah Warna
-                </Typography>
-              </TableCell>
-              <TableCell align="left">
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Jumlah Plate
-                </Typography>
-              </TableCell>
-              <TableCell align="left">
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Harga
-                </Typography>
-              </TableCell>
-              <TableCell align="left">
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Total Harga
-                </Typography>
-              </TableCell>
-              <TableCell align="left">
+              <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
                   Tanggal
                 </Typography>
               </TableCell>
-              <TableCell align="left">
+              <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Status
+                  Total Harga
                 </Typography>
               </TableCell>
-              <TableCell align="left">
+              <TableCell align="right">
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Keterangan
+                </Typography>
+              </TableCell>
+              <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
                   Action
                 </Typography>
@@ -165,8 +119,8 @@ const TransaksiTable = (): any => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.isArray(transaksi) && transaksi.length > 0 ? (
-              transaksi.map((option, index) => (
+            {Array.isArray(penjualanLainya) && penjualanLainya.length > 0 ? (
+              penjualanLainya.map((option, index) => (
                 <TableRow key={option.id}>
                   <TableCell>
                     <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -175,51 +129,16 @@ const TransaksiTable = (): any => {
                   </TableCell>
                   <TableCell>
                     <Typography color="textSecondary" sx={{ fontSize: "13px" }}>
-                      {option.namaKoran}
+                      {option.kodePenjualan}
                     </Typography>
                   </TableCell>
+
                   <TableCell>
                     <Typography color="textSecondary" sx={{ fontSize: "13px" }}>
-                      {option.jumlahHalaman}
+                      {option.namaPenjualan}
                     </Typography>
                   </TableCell>
-                  <TableCell align="left">
-                    <Typography
-                      color="textSecondary"
-                      variant="subtitle2"
-                      fontWeight={400}
-                    >
-                      {option.jumlahWarna}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="left">
-                    <Typography
-                      color="textSecondary"
-                      variant="subtitle2"
-                      fontWeight={400}
-                    >
-                      {option.jumlahPlate}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="left">
-                    <Typography
-                      color="textSecondary"
-                      variant="subtitle2"
-                      fontWeight={400}
-                    >
-                      {option.harga}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="left">
-                    <Typography
-                      color="textSecondary"
-                      variant="subtitle2"
-                      fontWeight={400}
-                    >
-                      {option.totalHarga}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="left">
+                  <TableCell align="right">
                     <Typography
                       color="textSecondary"
                       variant="subtitle2"
@@ -228,37 +147,32 @@ const TransaksiTable = (): any => {
                       {dayjs(option.tanggal).format("DD-MM-YYYY")}
                     </Typography>
                   </TableCell>
-                  <TableCell align="left">
-                    <Typography variant="subtitle2" fontWeight={400}>
-                      <span
-                        style={{
-                          backgroundColor:
-                            statusDisplay(option.status) === "error"
-                              ? "#f44336"
-                              : "#4caf50",
-                          padding: "6px 8px",
-                          borderRadius: "4px",
-                          color: "#fff",
-                        }}
-                      >
-                        {option.status}
-                      </span>
+                  <TableCell align="right">
+                    <Typography
+                      color="textSecondary"
+                      variant="subtitle2"
+                      fontWeight={400}
+                    >
+                      {option.totalHarga}
                     </Typography>
                   </TableCell>
-                  <TableCell align="center">
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={() => checklist(option.id)}
-                      sx={{ borderRadius: "16px" }}
+                  <TableCell align="right">
+                    <Typography
+                      color="textSecondary"
+                      variant="subtitle2"
+                      fontWeight={400}
                     >
-                      <HiCheck />
+                      {option.keterangan}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Button variant="outlined" sx={{ marginRight: "10px" }}>
+                      Edit
                     </Button>
                     <Button
                       variant="outlined"
                       color="error"
-                      onClick={() => deleteItem(option.id)}
-                      sx={{ borderRadius: "16px", ml: 1 }}
+                      onClick={() => deleteItem(option.id!)}
                     >
                       Delete
                     </Button>
@@ -267,7 +181,7 @@ const TransaksiTable = (): any => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={10} align="center">
+                <TableCell colSpan={8} align="center">
                   <Typography variant="subtitle1">No data available</Typography>
                 </TableCell>
               </TableRow>
@@ -279,4 +193,4 @@ const TransaksiTable = (): any => {
   );
 };
 
-export default TransaksiTable;
+export default OthersaleTable;

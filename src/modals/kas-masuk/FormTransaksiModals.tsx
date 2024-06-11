@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -41,7 +41,6 @@ const FormTransaksiModals: React.FC = () => {
       [name]: value,
     };
 
-    // Calculate price and plate based on jumlahHalaman and jumlahWarna
     const jumlahHalaman = parseInt(newTransaksi.jumlahHalaman);
     const jumlahWarna = parseInt(newTransaksi.jumlahWarna);
     const eksemplar = parseInt(newTransaksi.eksemplar);
@@ -68,7 +67,7 @@ const FormTransaksiModals: React.FC = () => {
     } else if (jumlahHalaman === 16 && jumlahWarna === 6) {
       newHarga = "6500";
     } else {
-      alert("jumlah halaman dan jumlah warna tersebut belum ada");
+      // alert("jumlah halaman dan jumlah warna tersebut belum ada");
     }
 
     if (jumlahHalaman === 8 && jumlahWarna === 2) {
@@ -84,7 +83,7 @@ const FormTransaksiModals: React.FC = () => {
     } else if (jumlahHalaman === 16 && jumlahWarna === 4) {
       newJumlahPlate = "15";
     } else {
-      alert("jumlah warna tidak boleh melebihi angka tersebut");
+      // alert("jumlah warna tidak boleh melebihi angka tersebut");
     }
 
     newTransaksi = {
@@ -114,14 +113,6 @@ const FormTransaksiModals: React.FC = () => {
       );
       console.log(response.data.data);
       window.alert("Transaksi berhasil ditambahkan");
-
-      const fetchData = async () => {
-        const response = await axios.get(
-          "http://localhost:8080/penjualan/transaksi"
-        );
-        setTransaksi(response.data.data);
-      };
-      fetchData();
 
       handleClose();
     } catch (error) {

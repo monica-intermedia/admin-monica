@@ -36,11 +36,26 @@ const DataTransaksiTable = (): any => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(
-        "http://localhost:8080/penjualan/datatransaksi"
-      );
-      setTransaksi(response.data.data);
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/penjualan/datatransaksi"
+        );
+        setTransaksi(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    const response = await axios.get(
+      "http://localhost:8080/penjualan/datatransaksi"
+    );
+    setTransaksi(response.data.data);
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -52,8 +67,17 @@ const DataTransaksiTable = (): any => {
       if (confirmed) {
         await axios.delete(`http://localhost:8080/penjualan/transaksi/${id}`);
       }
+      fetchData();
     } catch (error) {
       console.error("Error deleting item:", error);
+    }
+  };
+
+  const statusDisplay = (status: string) => {
+    if (status === "belum-dicetak") {
+      return "error";
+    } else {
+      return "success";
     }
   };
 
@@ -207,13 +231,19 @@ const DataTransaksiTable = (): any => {
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Typography
-                      color="textSecondary"
-                      variant="subtitle2"
-                      fontWeight={400}
+                    <span
+                      style={{
+                        backgroundColor:
+                          statusDisplay(option.status) === "error"
+                            ? "#f44336"
+                            : "#4caf50",
+                        padding: "6px 8px",
+                        borderRadius: "4px",
+                        color: "#fff",
+                      }}
                     >
                       {option.status}
-                    </Typography>
+                    </span>
                   </TableCell>
                   <TableCell align="right">
                     <Typography

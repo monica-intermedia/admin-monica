@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Box,
@@ -14,7 +14,7 @@ import { IconPrinter } from "@tabler/icons-react";
 import DashboardCard from "../../shared/DashboardCard";
 import Link from "next/link";
 import FormDialogPegawai from "../../../modals/pegawai/FormDialogPegawai";
-import { useFetchData, handleDelete } from "../../../action/actions";
+import axios from "axios";
 
 interface Jabatan {
   jabatan: string;
@@ -33,7 +33,26 @@ interface Staff {
 const PositionTable = (): React.ReactElement => {
   const [staff, setStaff] = useState<Staff[]>([]);
 
-  useFetchData("http://localhost:8080/pegawai/pegawai", setStaff);
+  const fetchData = async () => {
+    const response = await axios.get("http://localhost:8080/pegawai/pegawai");
+    setStaff(response.data.data);
+  };
+
+  const deleteItem = async (id: string) => {
+    try {
+      const confirm = window.confirm("are you sure delete this item?");
+
+      if (confirm) {
+        await axios.delete(`http://localhost:8080/pegawai/pegawai/${id}`);
+      }
+    } catch (error) {
+      console.error("fail to delete data", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  });
 
   return (
     <DashboardCard title="Tabel Pegawai">
@@ -276,13 +295,7 @@ const PositionTable = (): React.ReactElement => {
                     <Button
                       variant="outlined"
                       color="error"
-                      onClick={() =>
-                        handleDelete(
-                          staff.id,
-                          setStaff,
-                          "http://localhost:8080/pegawai/pegawai"
-                        )
-                      }
+                      onClick={() => deleteItem(staff.id)}
                     >
                       Delete
                     </Button>
