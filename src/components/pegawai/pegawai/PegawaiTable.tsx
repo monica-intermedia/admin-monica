@@ -52,14 +52,14 @@ const PositionTable = (): React.ReactElement => {
 
   useEffect(() => {
     fetchData();
-  });
+  }, []);
 
   return (
     <DashboardCard title="Tabel Pegawai">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <FormDialogPegawai setItems={setStaff} />
+            <FormDialogPegawai />
             <Button
               variant="contained"
               style={{

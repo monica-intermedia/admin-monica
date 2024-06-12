@@ -55,7 +55,7 @@ const OtherBuyTable = (): any => {
   };
 
   return (
-    <DashboardCard title="Tabel Pembelian Barang">
+    <DashboardCard title="Tabel Pembelian Lainya">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">

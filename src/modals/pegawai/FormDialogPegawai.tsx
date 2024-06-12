@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -8,18 +8,14 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
-import { addItem, useFetchData } from "../../action/actions";
-
-interface FormDialogPegawaiProps {
-  setItems: React.Dispatch<React.SetStateAction<any[]>>;
-}
+import axios from "axios";
 
 interface Position {
   jabatan: string;
   id: string;
 }
 
-const FormDialogPegawai: React.FC<FormDialogPegawaiProps> = ({ setItems }) => {
+const FormDialogPegawai: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [addPegawai, setAddPegawai] = useState({
     nip: "",
@@ -34,8 +30,6 @@ const FormDialogPegawai: React.FC<FormDialogPegawaiProps> = ({ setItems }) => {
   });
 
   const [jabatan, setJabatan] = useState<Position[]>([]);
-
-  useFetchData("http://localhost:8080/pegawai/jabatan", setJabatan);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -52,44 +46,47 @@ const FormDialogPegawai: React.FC<FormDialogPegawaiProps> = ({ setItems }) => {
     });
   };
 
+  const fetchJabatan = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/pegawai/jabatan");
+      console.log("Jabatan data:", response.data.data); // Logging response data
+      setJabatan(response.data.data);
+    } catch (error) {
+      console.error("Error fetching jabatan:", error);
+      window.alert(`Error fetching jabatan: ${error}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchJabatan();
+  }, []);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (
-      !addPegawai.nip ||
-      !addPegawai.name ||
-      !addPegawai.alamat ||
-      !addPegawai.email ||
-      !addPegawai.handphone ||
-      !addPegawai.jenisKelamin ||
-      !addPegawai.gaji ||
-      !addPegawai.password ||
-      !addPegawai.id_jabatan
-    ) {
-      alert("Please fill out all fields.");
-      return;
-    }
+    try {
+      const confirmed = window.confirm(
+        "Success add item. Do you want to continue?"
+      );
 
-    const success = await addItem(
-      "http://localhost:8080/pegawai/pegawai",
-      setItems,
-      addPegawai
-    );
+      if (confirmed) {
+        await axios.post("http://localhost:8080/pegawai/pegawai", addPegawai);
 
-    if (success) {
-      setItems((prevItems) => [...prevItems, addPegawai]);
-      setAddPegawai({
-        nip: "",
-        name: "",
-        alamat: "",
-        email: "",
-        handphone: "",
-        jenisKelamin: "",
-        gaji: "",
-        password: "",
-        id_jabatan: "",
-      });
-      handleClose();
+        const fetchData = async () => {
+          const response = await axios.get(
+            "http://localhost:8080/pegawai/pegawai"
+          );
+          console.log("Pegawai data:", response.data); // Logging response data
+          setAddPegawai(response.data.data);
+        };
+
+        await fetchData();
+        handleClose();
+        window.location.replace("/pegawai/jabatan");
+      }
+    } catch (error) {
+      console.error("Failed to add data", error);
+      window.alert(`Failed to add data: ${error}`);
     }
   };
 

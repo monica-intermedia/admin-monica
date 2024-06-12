@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -6,15 +6,13 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
-import { addItem } from "../../action/actions";
+import axios from "axios";
 
-interface FormDialogJabatanProps {
-  setItems: React.Dispatch<React.SetStateAction<any[]>>;
-}
-
-const FormDialogJabatan: React.FC<FormDialogJabatanProps> = ({ setItems }) => {
+const FormDialogJabatan: React.FC = () => {
   const [open, setOpen] = useState(false);
-  const [addJabatan, setAddJabtan] = useState<string>("");
+  const [addJabatan, setAddJabtan] = useState({
+    jabatan: "",
+  });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -24,25 +22,20 @@ const FormDialogJabatan: React.FC<FormDialogJabatanProps> = ({ setItems }) => {
     setOpen(false);
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formJson: { [key: string]: any } = {};
-    formData.forEach((value, key) => {
-      formJson[key] = value;
-    });
-    const jabatan = formJson.jabatan;
+  const handleChange = (e: React.ChangeEvent<any>) => {
+    setAddJabtan({ ...addJabatan, [e.target.name]: e.target.value });
+  };
 
-    const success = await addItem(
-      "http://localhost:8080/pegawai/jabatan",
-      setItems,
-      { jabatan }
-    );
-
-    if (success) {
-      setItems((prevItems) => [...prevItems, { jabatan }]);
-      setAddJabtan("");
-      handleClose();
+  const handleSubmit = async () => {
+    try {
+      const confirm = window.confirm("succes add item, do you want continue?");
+      if (confirm) {
+        await axios.post("http://localhost:8080/pegawai/jabatan", addJabatan);
+        window.location.replace("/pegawai/jabatan");
+      }
+    } catch (error) {
+      console.error("fail add item", error);
+      window.alert(`fail add item : ${error}`);
     }
   };
 
@@ -79,8 +72,8 @@ const FormDialogJabatan: React.FC<FormDialogJabatanProps> = ({ setItems }) => {
               type="text"
               fullWidth
               variant="standard"
-              value={addJabatan}
-              onChange={(e) => setAddJabtan(e.target.value)}
+              value={addJabatan.jabatan}
+              onChange={handleChange}
             />
           </DialogContent>
           <DialogActions sx={{ marginBottom: 2 }}>

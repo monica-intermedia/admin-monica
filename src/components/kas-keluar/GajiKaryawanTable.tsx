@@ -16,7 +16,7 @@ import dayjs from "dayjs";
 import axios from "axios";
 import FormDialoGaji from "../../modals/kas-keluar/FormDialogGaji";
 
-const OtherBuyTable = (): React.ReactNode => {
+const OtherBuyTable = (): any => {
   interface StaffProps {
     name: string;
     nip: string;
@@ -58,7 +58,7 @@ const OtherBuyTable = (): React.ReactNode => {
   };
 
   return (
-    <DashboardCard title="Tabel Pembelian Barang">
+    <DashboardCard title="Tabel Gaji Karyawan">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">

@@ -82,7 +82,7 @@ const DataTransaksiTable = (): any => {
   };
 
   return (
-    <DashboardCard title="Tabel Transaksi">
+    <DashboardCard title="Tabel Data Transaksi">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">

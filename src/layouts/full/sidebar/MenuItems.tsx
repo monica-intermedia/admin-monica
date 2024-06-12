@@ -96,7 +96,7 @@ const Menuitems = [
     id: uniqueId(),
     title: "Absensi",
     icon: IconCalendar,
-    href: "/pegawai/Absensi",
+    href: "/pegawai/absensi",
   },
 
   // Barang
