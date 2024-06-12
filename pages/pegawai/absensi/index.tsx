@@ -1,12 +1,12 @@
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
-import PegawaiTable from "../../../src/components/pegawai/pegawai/PegawaiTable";
+import AbsensiTable from "../../../src/components/pegawai/absensi/AbsensiTable";
 
 const Index = (): any => {
   return (
     <PageContainer title="pembelian barang" description="this is Sample page">
-      <PegawaiTable />
+      <AbsensiTable />
     </PageContainer>
   );
 };

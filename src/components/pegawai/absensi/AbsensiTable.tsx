@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -14,20 +14,50 @@ import { IconPrinter } from "@tabler/icons-react";
 import DashboardCard from "../../shared/DashboardCard";
 import Link from "next/link";
 import FormDialogJabatan from "../../../modals/pegawai/FormDialogJabatan";
-import { useFetchData, handleDelete } from "../../../action/actions";
+import axios from "axios";
+import dayjs from "dayjs";
 
-interface Position {
-  jabatan: string;
-  id: string;
+interface PegawaiProps {
+  name: string;
 }
 
-const PositionTable = (): React.ReactElement => {
-  const [jabatan, setJabatan] = useState<Position[]>([]);
+interface AbsensiProps {
+  id: string;
+  tanggal: string;
+  waktuMasuk: string;
+  waktuKeluar: string;
+  gambar: string;
+  keterangan: string;
+  pegawai: PegawaiProps;
+}
 
-  useFetchData("http://localhost:8080/pegawai/jabatan", setJabatan);
+const AbsensiTable = (): React.ReactElement => {
+  const [absensi, setAbsensi] = useState<AbsensiProps[]>([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/pegawai/absensi");
+      setAbsensi(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(`http://localhost:8080/pegawai/absensi/${id}`);
+      setAbsensi((prevAbsensi) => prevAbsensi.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Error deleting data", error);
+    }
+  };
 
   return (
-    <DashboardCard title="Tabel Jabatan">
+    <DashboardCard title="Tabel Absensi">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
@@ -49,7 +79,7 @@ const PositionTable = (): React.ReactElement => {
               <TextField
                 id="search-bar"
                 className="text"
-                label="masukan nama jabatan"
+                label="Masukan nama jabatan"
                 variant="outlined"
                 placeholder="Search..."
                 size="small"
@@ -74,7 +104,32 @@ const PositionTable = (): React.ReactElement => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Jabatan
+                  Nama Pegawai
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Tanggal
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Waktu Masuk
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Waktu Keluar
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Gambar
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Keterangan
                 </Typography>
               </TableCell>
               <TableCell>
@@ -85,8 +140,8 @@ const PositionTable = (): React.ReactElement => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {jabatan.map((positions, index) => (
-              <TableRow key={positions.id}>
+            {absensi.map((position, index) => (
+              <TableRow key={position.id}>
                 <TableCell>
                   <Typography
                     sx={{
@@ -98,31 +153,72 @@ const PositionTable = (): React.ReactElement => {
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Box
+                  <Typography
+                    color="textSecondary"
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
+                      fontSize: "13px",
                     }}
                   >
-                    <Box>
-                      <Typography
-                        variant="subtitle2"
-                        fontWeight={600}
-                      ></Typography>
-                      <Typography
-                        color="textSecondary"
-                        sx={{
-                          fontSize: "13px",
-                        }}
-                      >
-                        {positions.jabatan}
-                      </Typography>
-                    </Box>
-                  </Box>
+                    {position.pegawai.name}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    color="textSecondary"
+                    sx={{
+                      fontSize: "13px",
+                    }}
+                  >
+                    {dayjs(position.tanggal).format("DD-MM-YYYY")}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    color="textSecondary"
+                    sx={{
+                      fontSize: "13px",
+                    }}
+                  >
+                    {position.waktuMasuk}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    color="textSecondary"
+                    sx={{
+                      fontSize: "13px",
+                    }}
+                  >
+                    {position.waktuKeluar}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    color="textSecondary"
+                    sx={{
+                      fontSize: "13px",
+                    }}
+                  >
+                    <img
+                      src={position.gambar}
+                      alt="Absensi"
+                      style={{ width: "50px", height: "50px" }}
+                    />
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    color="textSecondary"
+                    sx={{
+                      fontSize: "13px",
+                    }}
+                  >
+                    {position.keterangan}
+                  </Typography>
                 </TableCell>
                 <TableCell>
                   <Link
-                    href={`/pegawai/jabatan/${positions.id}`}
+                    href={`/pegawai/jabatan/${position.id}`}
                     style={{ marginRight: "10px" }}
                   >
                     <Button variant="outlined">Edit</Button>
@@ -130,13 +226,7 @@ const PositionTable = (): React.ReactElement => {
                   <Button
                     variant="outlined"
                     color="error"
-                    onClick={() =>
-                      handleDelete(
-                        positions.id!,
-                        setJabatan,
-                        "http://localhost:8080/pegawai/jabatan"
-                      )
-                    }
+                    onClick={() => handleDelete(position.id)}
                   >
                     Delete
                   </Button>
@@ -150,4 +240,4 @@ const PositionTable = (): React.ReactElement => {
   );
 };
 
-export default PositionTable;
+export default AbsensiTable;
