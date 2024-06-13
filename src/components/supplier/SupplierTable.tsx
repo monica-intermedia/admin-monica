@@ -34,7 +34,7 @@ const PositionTable = (): React.ReactElement => {
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <FormDialogSupplier setItems={setSupplier} />
+            <FormDialogSupplier />
             <Button
               variant="contained"
               style={{

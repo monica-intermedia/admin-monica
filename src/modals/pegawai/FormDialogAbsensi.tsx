@@ -7,7 +7,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
 import axios from "axios";
-import dayjs from "dayjs";
 import { MenuItem } from "@mui/material";
 
 interface PegawaiProps {
