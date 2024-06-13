@@ -106,12 +106,6 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Data Barang",
-    icon: IconFolder,
-    href: "/barang/data-barang",
-  },
-  {
-    id: uniqueId(),
     title: "Stok Barang",
     icon: IconFolder,
     href: "/barang/stok-barang",

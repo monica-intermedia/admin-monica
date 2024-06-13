@@ -13,9 +13,9 @@ import {
 import { IconPrinter } from "@tabler/icons-react";
 import DashboardCard from "../../shared/DashboardCard";
 import Link from "next/link";
-import FormDialogJabatan from "../../../modals/pegawai/FormDialogJabatan";
 import axios from "axios";
 import dayjs from "dayjs";
+import FormDialogAbsensi from "../../../modals/pegawai/FormDialogAbsensi";
 
 interface PegawaiProps {
   name: string;
@@ -61,7 +61,7 @@ const AbsensiTable = (): React.ReactElement => {
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <FormDialogJabatan />
+            <FormDialogAbsensi />
             <Button
               variant="contained"
               style={{

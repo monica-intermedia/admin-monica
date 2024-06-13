@@ -6,27 +6,15 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
-import { addItem } from "../../action/actions";
+import axios from "axios";
 
-interface FormDialogSupplierProps {
-  setItems: React.Dispatch<React.SetStateAction<any[]>>;
-}
-
-const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
-  setItems,
-}) => {
+const FormDialogSupplier: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [supplier, setSupplier] = useState({
     name: "",
     alamat: "",
     email: "",
     handphone: "",
-  });
-  const [errors, setErrors] = useState({
-    name: false,
-    alamat: false,
-    email: false,
-    handphone: false,
   });
 
   const handleClickOpen = () => {
@@ -37,48 +25,22 @@ const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
     setOpen(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setSupplier({
-      ...supplier,
-      [name]: value,
-    });
-    if (value) {
-      setErrors({
-        ...errors,
-        [name]: false,
-      });
-    }
+  const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSupplier({ ...supplier, [event.target.name]: event.target.value });
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const newErrors = {
-      name: !supplier.name,
-      alamat: !supplier.alamat,
-      email: !supplier.email,
-      handphone: !supplier.handphone,
-    };
-
-    if (Object.values(newErrors).some((error) => error)) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const success = await addItem(
-      "http://localhost:8080/pelanggan/supplier",
-      setItems
-    );
-
-    if (success) {
-      setSupplier({
-        name: "",
-        alamat: "",
-        email: "",
-        handphone: "",
-      });
-      handleClose();
+    try {
+      const confirm = window.confirm(
+        "success add item, do you want to continue"
+      );
+      if (confirm) {
+        await axios.post("http://localhost:8080/pelanggan/supplier", supplier);
+        window.location.replace("/supplier/data-supplier");
+      }
+    } catch (error) {
+      console.error("fail add item", error);
     }
   };
 
@@ -117,8 +79,6 @@ const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
               variant="standard"
               value={supplier.name}
               onChange={handleChange}
-              error={errors.name}
-              helperText={errors.name && "Nama diperlukan"}
             />
             <TextField
               required
@@ -131,8 +91,6 @@ const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
               variant="standard"
               value={supplier.alamat}
               onChange={handleChange}
-              error={errors.alamat}
-              helperText={errors.alamat && "Alamat diperlukan"}
             />
             <TextField
               required
@@ -145,8 +103,6 @@ const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
               variant="standard"
               value={supplier.email}
               onChange={handleChange}
-              error={errors.email}
-              helperText={errors.email && "Email diperlukan"}
             />
             <TextField
               required
@@ -159,8 +115,6 @@ const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
               variant="standard"
               value={supplier.handphone}
               onChange={handleChange}
-              error={errors.handphone}
-              helperText={errors.handphone && "Nomor handphone diperlukan"}
             />
           </DialogContent>
           <DialogActions sx={{ marginBottom: 2 }}>
