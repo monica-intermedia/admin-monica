@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import PageContainer from "../../../src/components/container/PageContainer";
 import FullLayout from "../../../src/layouts/full/FullLayout";
-import SupplierTable from "../../../src/components/pelanggan/SupplierTable";
+import SupplierTable from "../../../src/components/supplier/SupplierTable";
 
 const Index = (): any => {
   return (

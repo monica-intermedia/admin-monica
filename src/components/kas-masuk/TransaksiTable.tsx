@@ -74,7 +74,7 @@ const TransaksiTable = (): any => {
       );
       if (confirmed) {
         await axios.put(`http://localhost:8080/penjualan/transaksi/${id}`, {
-          status: "sudah-dicetak",
+          statusCetak: "sudah-dicetak",
           isValid: true,
         });
         fetchData();

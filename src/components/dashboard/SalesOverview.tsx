@@ -12,35 +12,36 @@ interface TransaksiProps {
 }
 
 const SalesOverview = () => {
-  // select
   const [month, setMonth] = useState("1");
   const [dataTransaksi, setDataTransaksi] = useState<TransaksiProps[]>([]);
+  const [pendapatan, setPendapatan] = useState<number[]>([]);
 
-  const fetchDataTransaksi = async () => {
+  const fetchDataTransaksi = async (selectedMonth: string) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/penjualan/transaksibydate"
+        `http://localhost:8080/chart/pembelian?month=${selectedMonth}`
       );
-      setDataTransaksi(response.data.data);
+      setDataTransaksi(response.data.data || []); // Ensure data is not undefined
     } catch (error) {
       console.error("Error fetching data:", error);
+      setDataTransaksi([]); // Handle error by setting data to an empty array
     }
   };
 
   useEffect(() => {
-    fetchDataTransaksi();
-  }, []);
+    fetchDataTransaksi(month);
+  }, [month]);
 
   const handleChange = (event: any) => {
     setMonth(event.target.value);
   };
 
-  // chart color
+  // Chart color
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const secondary = theme.palette.secondary.main;
 
-  // chart
+  // Chart options
   const optionscolumnchart: any = {
     chart: {
       type: "bar",
@@ -100,12 +101,8 @@ const SalesOverview = () => {
 
   const seriescolumnchart: any = [
     {
-      name: "Earnings this month",
-      data: dataTransaksi.map((item) => item.totalAmount),
-    },
-    {
       name: "Expense this month",
-      data: [280, 250, 325, 215, 250, 310, 280, 250], // Example data
+      data: dataTransaksi.map((item) => item.totalAmount),
     },
   ];
 
@@ -120,18 +117,31 @@ const SalesOverview = () => {
           size="small"
           onChange={handleChange}
         >
-          <MenuItem value={1}>March 2023</MenuItem>
-          <MenuItem value={2}>April 2023</MenuItem>
-          <MenuItem value={3}>May 2023</MenuItem>
+          <MenuItem value={1}>January 2023</MenuItem>
+          <MenuItem value={2}>February 2023</MenuItem>
+          <MenuItem value={3}>March 2023</MenuItem>
+          <MenuItem value={4}>April 2023</MenuItem>
+          <MenuItem value={5}>May 2023</MenuItem>
+          <MenuItem value={6}>June 2023</MenuItem>
+          <MenuItem value={7}>July 2023</MenuItem>
+          <MenuItem value={8}>August 2023</MenuItem>
+          <MenuItem value={9}>September 2023</MenuItem>
+          <MenuItem value={10}>October 2023</MenuItem>
+          <MenuItem value={11}>November 2023</MenuItem>
+          <MenuItem value={12}>December 2023</MenuItem>
         </Select>
       }
     >
-      <Chart
-        options={optionscolumnchart}
-        series={seriescolumnchart}
-        type="bar"
-        height="370px"
-      />
+      {dataTransaksi.length > 0 ? (
+        <Chart
+          options={optionscolumnchart}
+          series={seriescolumnchart}
+          type="bar"
+          height="370px"
+        />
+      ) : (
+        <p>No data available for the selected month.</p>
+      )}
     </DashboardCard>
   );
 };
