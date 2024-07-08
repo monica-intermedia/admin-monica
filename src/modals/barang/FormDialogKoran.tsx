@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -9,15 +9,33 @@ import { IconPlus } from "@tabler/icons-react";
 import axios from "axios";
 import { fetchData } from "next-auth/client/_utils";
 
-const FormPembelianLainya = () => {
+interface BarangProps {
+  id_barang: string;
+}
+
+const FormDialogKoran = () => {
   const [open, setOpen] = useState(false);
-  const [pembelianLainya, setPembelianLainya] = useState({
-    nomorFaktur: "",
-    jenisPembelian: "",
-    qty: "",
-    tanggal: "",
-    totalHarga: "",
+  const [koran, setKoran] = useState({
     keterangan: "",
+    halaman: null,
+    warna: null,
+    plate: null,
+    harga: null,
+    id_barang: "",
+  });
+  const [barang, setBarang] = useState<BarangProps[]>([]);
+
+  const fecthData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/barang/barang");
+      setBarang(response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fecthData();
   });
 
   const handleClickOpen = () => {
@@ -29,37 +47,19 @@ const FormPembelianLainya = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPembelianLainya({
-      ...pembelianLainya,
+    setKoran({
+      ...koran,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/kaskeluar/pembelianlainya",
-        pembelianLainya
-      );
-      console.log(response.data.data);
-      window.alert("Pembelian berhasil ditambahkan!");
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-      const fetchData = async () => {
-        const response = await axios.get(
-          "http://localhost:8080/kaskeluar/pembelianlainya"
-        );
-        setPembelianLainya(response.data.data);
-      };
-      fetchData();
-
-      window.location.replace("/kas-masuk/penjualan-lainya");
-
-      handleClose();
-    } catch (error) {
-      console.error("Error adding pembelian lainya:", error);
-      window.alert("Gagal menambahkan pembelian lainya");
-    }
+    const response = await axios.post("http://localhost:8080/koran", koran);
+    console.log(response);
+    window.alert("barang berhasil ditambahkan");
+    window.location.replace("/barang/halaman-koran");
   };
 
   return (
@@ -83,78 +83,79 @@ const FormPembelianLainya = () => {
         <form onSubmit={handleSubmit}>
           <DialogContent style={{ width: "550px" }}>
             <DialogContentText>
-              <h2>Masukan Pembelian Lainya</h2>
+              <h2>Masukan Halaman Koran</h2>
             </DialogContentText>
             <TextField
               autoFocus
               required
               margin="dense"
-              id="nomorFaktur"
-              name="nomorFaktur"
-              label="Nomor Faktur"
-              type="text"
-              fullWidth
-              variant="standard"
-              value={pembelianLainya.nomorFaktur}
-              onChange={handleChange}
-            />
-            <TextField
-              required
-              margin="dense"
-              id="jenisPembelian"
-              name="jenisPembelian"
-              label="Jenis Pembelian"
-              type="text"
-              fullWidth
-              variant="standard"
-              value={pembelianLainya.jenisPembelian}
-              onChange={handleChange}
-            />
-            <TextField
-              required
-              margin="dense"
-              id="qty"
-              name="qty"
-              label="Quantity"
-              type="number"
-              fullWidth
-              variant="standard"
-              value={pembelianLainya.qty}
-              onChange={handleChange}
-            />
-            <TextField
-              required
-              margin="dense"
-              id="tanggal"
-              name="tanggal"
-              type="date"
-              fullWidth
-              variant="standard"
-              value={pembelianLainya.tanggal}
-              onChange={handleChange}
-            />
-            <TextField
-              required
-              margin="dense"
-              id="totalHarga"
-              name="totalHarga"
-              label="Total Harga"
-              type="number"
-              fullWidth
-              variant="standard"
-              value={pembelianLainya.totalHarga}
-              onChange={handleChange}
-            />
-            <TextField
-              required
-              margin="dense"
               id="keterangan"
               name="keterangan"
-              label="Keterangan"
+              label="Masukan keterangan"
               type="text"
               fullWidth
               variant="standard"
-              value={pembelianLainya.keterangan}
+              value={koran.keterangan}
+              onChange={handleChange}
+            />
+            <TextField
+              required
+              margin="dense"
+              id="halaman"
+              name="halaman"
+              label="Masukan halaman"
+              type="number"
+              fullWidth
+              variant="standard"
+              value={koran.halaman}
+              onChange={handleChange}
+            />
+            <TextField
+              required
+              margin="dense"
+              id="warna"
+              name="warna"
+              label="Masukan warna"
+              type="number"
+              fullWidth
+              variant="standard"
+              value={koran.warna}
+              onChange={handleChange}
+            />
+            <TextField
+              required
+              margin="dense"
+              id="plate"
+              name="plate"
+              label="Masukan plate"
+              type="number"
+              fullWidth
+              variant="standard"
+              value={koran.plate}
+              onChange={handleChange}
+            />
+            <TextField
+              required
+              margin="dense"
+              id="harga"
+              name="harga"
+              label="Masukan harga"
+              type="number"
+              fullWidth
+              variant="standard"
+              value={koran.harga}
+              onChange={handleChange}
+            />
+            <TextField
+              required
+              margin="dense"
+              id="harga"
+              name="harga"
+              label="Masukan harga"
+              type="text"
+              fullWidth
+              variant="standard"
+              value={koran.id_barang}
               onChange={handleChange}
             />
           </DialogContent>
@@ -168,4 +169,4 @@ const FormPembelianLainya = () => {
   );
 };
 
-export default FormPembelianLainya;
+export default FormDialogKoran;

@@ -52,6 +52,8 @@ const FormOtherSellModals = () => {
       };
       fetchData();
 
+      window.location.replace("/kas-masuk/penjualan-lainya");
+
       handleClose();
     } catch (error) {
       console.error("Error adding pembelian lainya:", error);

@@ -13,22 +13,24 @@ import {
 } from "@mui/material";
 import DashboardCard from "../shared/DashboardCard";
 import axios from "axios";
-import FormDialogBarang from "../../modals/barang/FormDialogBarang";
+import FormDialogKoran from "../../modals/barang/FormDialogKoran";
 
-const StokBarangTable = (): any => {
-  interface BarangProps {
+const HalamanKoranTable = (): any => {
+  interface KoranProps {
     id: string;
-    namaBarang: string;
+    keterangan: string;
+    halaman: number;
+    warna: number;
+    plate: number;
     harga: number;
-    stok: number;
   }
 
-  const [barang, setBarang] = useState<BarangProps[]>([]);
+  const [koran, setKoran] = useState<KoranProps[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get("http://localhost:8080/barang/barang");
-      setBarang(response.data.data);
+      const response = await axios.get("http://localhost:8080/koran");
+      setKoran(response.data.data);
     };
     fetchData();
   }, []);
@@ -39,7 +41,8 @@ const StokBarangTable = (): any => {
         "Are you sure you want to delete this item?"
       );
       if (confirmed) {
-        await axios.delete(`http://localhost:8080/barang/barang/${id}`);
+        await axios.delete(`http://localhost:8080/koran/${id}`);
+        window.location.replace("/barang/halaman-koran");
       }
     } catch (error) {
       console.error("Error deleting item:", error);
@@ -47,11 +50,11 @@ const StokBarangTable = (): any => {
   };
 
   return (
-    <DashboardCard title="Tabel Pembelian Lainya">
+    <DashboardCard title="Tabel Halaman Koran">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <FormDialogBarang />
+            <FormDialogKoran />
             <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
               <IconPrinter />
             </Button>
@@ -80,7 +83,22 @@ const StokBarangTable = (): any => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Nama Barang
+                  Keterangan
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Halaman
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Warna
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Plate
                 </Typography>
               </TableCell>
               <TableCell>
@@ -90,19 +108,14 @@ const StokBarangTable = (): any => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Stok
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography variant="subtitle2" fontWeight={600}>
                   Action
                 </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.isArray(barang) && barang.length > 0 ? (
-              barang.map((item, index) => (
+            {Array.isArray(koran) && koran.length > 0 ? (
+              koran.map((item, index) => (
                 <TableRow key={item.id}>
                   <TableCell>
                     <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -111,26 +124,44 @@ const StokBarangTable = (): any => {
                   </TableCell>
                   <TableCell>
                     <Typography color="textSecondary" sx={{ fontSize: "13px" }}>
-                      {item.namaBarang}
+                      {item.keterangan}
                     </Typography>
                   </TableCell>
 
                   <TableCell>
                     <Typography color="textSecondary" sx={{ fontSize: "13px" }}>
-                      {item.harga}
+                      {item.halaman}
                     </Typography>
                   </TableCell>
 
-                  <TableCell align="right">
+                  <TableCell>
                     <Typography
                       color="textSecondary"
                       variant="subtitle2"
                       fontWeight={400}
                     >
-                      {item.stok}
+                      {item.warna}
                     </Typography>
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell>
+                    <Typography
+                      color="textSecondary"
+                      variant="subtitle2"
+                      fontWeight={400}
+                    >
+                      {item.plate}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography
+                      color="textSecondary"
+                      variant="subtitle2"
+                      fontWeight={400}
+                    >
+                      {item.harga}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
                     <Button variant="outlined" sx={{ marginRight: "10px" }}>
                       Edit
                     </Button>
@@ -158,4 +189,4 @@ const StokBarangTable = (): any => {
   );
 };
 
-export default StokBarangTable;
+export default HalamanKoranTable;

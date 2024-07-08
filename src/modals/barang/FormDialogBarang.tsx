@@ -6,27 +6,15 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
-import { addItem } from "../../action/actions";
+import axios from "axios";
+import { useRouter } from "next/router";
 
-interface FormDialogSupplierProps {
-  setItems: React.Dispatch<React.SetStateAction<any[]>>;
-}
-
-const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
-  setItems,
-}) => {
+const FormDialogBarang = () => {
   const [open, setOpen] = useState(false);
-  const [supplier, setSupplier] = useState({
-    name: "",
-    alamat: "",
-    email: "",
-    handphone: "",
-  });
-  const [errors, setErrors] = useState({
-    name: false,
-    alamat: false,
-    email: false,
-    handphone: false,
+  const [barang, setBarang] = useState({
+    namaBarang: "",
+    harga: null,
+    stok: null,
   });
 
   const handleClickOpen = () => {
@@ -39,47 +27,22 @@ const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setSupplier({
-      ...supplier,
+    setBarang({
+      ...barang,
       [name]: value,
     });
-    if (value) {
-      setErrors({
-        ...errors,
-        [name]: false,
-      });
-    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const newErrors = {
-      name: !supplier.name,
-      alamat: !supplier.alamat,
-      email: !supplier.email,
-      handphone: !supplier.handphone,
-    };
-
-    if (Object.values(newErrors).some((error) => error)) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const success = await addItem(
-      "http://localhost:8080/pelanggan/supplier",
-      setItems
+    const response = await axios.post(
+      "http://localhost:8080/barang/barang",
+      barang
     );
-
-    if (success) {
-      setSupplier({
-        name: "",
-        alamat: "",
-        email: "",
-        handphone: "",
-      });
-      handleClose();
-    }
+    console.log(response);
+    window.alert("barang berhasil ditambahkan");
+    window.location.replace("/barang/stok-barang");
   };
 
   return (
@@ -109,58 +72,38 @@ const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
               autoFocus
               required
               margin="dense"
-              id="name"
-              name="name"
-              label="Masukan nama supplier"
+              id="namaBarang"
+              name="namaBarang"
+              label="Masukan nama barang"
               type="text"
               fullWidth
               variant="standard"
-              value={supplier.name}
+              value={barang.namaBarang}
               onChange={handleChange}
-              error={errors.name}
-              helperText={errors.name && "Nama diperlukan"}
             />
             <TextField
               required
               margin="dense"
-              id="alamat"
-              name="alamat"
-              label="Masukan alamat"
-              type="text"
-              fullWidth
-              variant="standard"
-              value={supplier.alamat}
-              onChange={handleChange}
-              error={errors.alamat}
-              helperText={errors.alamat && "Alamat diperlukan"}
-            />
-            <TextField
-              required
-              margin="dense"
-              id="email"
-              name="email"
-              label="Masukan email"
-              type="email"
-              fullWidth
-              variant="standard"
-              value={supplier.email}
-              onChange={handleChange}
-              error={errors.email}
-              helperText={errors.email && "Email diperlukan"}
-            />
-            <TextField
-              required
-              margin="dense"
-              id="handphone"
-              name="handphone"
-              label="Masukan nomor handphone"
+              id="harga"
+              name="harga"
+              label="Masukan harga"
               type="number"
               fullWidth
               variant="standard"
-              value={supplier.handphone}
+              value={barang.harga}
               onChange={handleChange}
-              error={errors.handphone}
-              helperText={errors.handphone && "Nomor handphone diperlukan"}
+            />
+            <TextField
+              required
+              margin="dense"
+              id="stok"
+              name="stok"
+              label="Masukan stok"
+              type="number"
+              fullWidth
+              variant="standard"
+              value={barang.stok}
+              onChange={handleChange}
             />
           </DialogContent>
           <DialogActions sx={{ marginBottom: 2 }}>
@@ -173,4 +116,4 @@ const FormDialogSupplier: React.FC<FormDialogSupplierProps> = ({
   );
 };
 
-export default FormDialogSupplier;
+export default FormDialogBarang;

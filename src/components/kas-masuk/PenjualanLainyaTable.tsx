@@ -37,7 +37,9 @@ const OthersaleTable = (): any => {
 
   useEffect(() => {
     fetchData();
-  });
+  }, []);
+
+  console.log(penjualanLainya);
 
   const deleteItem = async (id: string) => {
     try {

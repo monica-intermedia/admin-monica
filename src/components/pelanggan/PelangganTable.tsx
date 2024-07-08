@@ -14,7 +14,7 @@ import { IconPrinter } from "@tabler/icons-react";
 import DashboardCard from "../shared/DashboardCard";
 import Link from "next/link";
 import { useFetchData, handleDelete } from "../../action/actions";
-import FormDialogSupplier from "../../modals/pelanggan/FormDialogSupplier";
+import FormDialogPelanggan from "../../modals/pelanggan/FormDialogPelanggan";
 
 interface SupplierProps {
   id: string;
@@ -30,11 +30,11 @@ const PelangganTable = (): React.ReactElement => {
   useFetchData("http://localhost:8080/pelanggan/pelanggan", setPelanggan);
 
   return (
-    <DashboardCard title="Tabel Jabatan">
+    <DashboardCard title="Tabel Pelanggan">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <FormDialogSupplier />
+            <FormDialogPelanggan />
             <Button
               variant="contained"
               style={{
@@ -52,7 +52,7 @@ const PelangganTable = (): React.ReactElement => {
               <TextField
                 id="search-bar"
                 className="text"
-                label="masukan nama jabatan"
+                label="masukan nama Pelanggan"
                 variant="outlined"
                 placeholder="Search..."
                 size="small"

@@ -110,18 +110,12 @@ const Menuitems = [
     icon: IconFolder,
     href: "/barang/stok-barang",
   },
-  // Pelanggan
-  {
-    navlabel: true,
-    subheader: "Pelanggan",
-  },
   {
     id: uniqueId(),
-    title: "Data Pelanggan",
-    icon: IconUserPlus,
-    href: "/pelanggan/data-pelanggan",
+    title: "Halaman Koran",
+    icon: IconFolder,
+    href: "/barang/halaman-koran",
   },
-
   // Supplier
   {
     navlabel: true,

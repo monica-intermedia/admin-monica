@@ -18,26 +18,27 @@ import { HiCheck } from "react-icons/hi";
 import FormTransaksiModals from "../../modals/kas-masuk/FormTransaksiModals";
 
 const TransaksiTable = (): any => {
+  interface KoranProps {
+    halaman: number;
+    warna: number;
+    plate: number;
+    harga: number;
+  }
   interface Pembelian {
     id: string;
     namaKoran: string;
-    keterangan: string;
     eksemplar: number;
-    jumlahHalaman: number;
-    jumlahWarna: number;
-    jumlahPlate: number;
-    harga: number;
-    totalHarga: number;
-    status: string;
-    file: string;
+    gross_amount: number;
+    statusCetak: string;
     tanggal: Date;
+    koran: KoranProps;
   }
 
   const [transaksi, setTransaksi] = useState<Pembelian[]>([]);
 
   const fetchData = async () => {
     const response = await axios.get(
-      "http://localhost:8080/penjualan/transaksi"
+      "http://localhost:8080/penjualan/transaksistatus"
     );
     setTransaksi(response.data.data);
   };
@@ -180,7 +181,7 @@ const TransaksiTable = (): any => {
                   </TableCell>
                   <TableCell>
                     <Typography color="textSecondary" sx={{ fontSize: "13px" }}>
-                      {option.jumlahHalaman}
+                      {option.koran.halaman}
                     </Typography>
                   </TableCell>
                   <TableCell align="left">
@@ -189,7 +190,7 @@ const TransaksiTable = (): any => {
                       variant="subtitle2"
                       fontWeight={400}
                     >
-                      {option.jumlahWarna}
+                      {option.koran.warna}
                     </Typography>
                   </TableCell>
                   <TableCell align="left">
@@ -198,7 +199,7 @@ const TransaksiTable = (): any => {
                       variant="subtitle2"
                       fontWeight={400}
                     >
-                      {option.jumlahPlate}
+                      {option.koran.plate}
                     </Typography>
                   </TableCell>
                   <TableCell align="left">
@@ -207,7 +208,7 @@ const TransaksiTable = (): any => {
                       variant="subtitle2"
                       fontWeight={400}
                     >
-                      {option.harga}
+                      {option.koran.harga}
                     </Typography>
                   </TableCell>
                   <TableCell align="left">
@@ -216,7 +217,7 @@ const TransaksiTable = (): any => {
                       variant="subtitle2"
                       fontWeight={400}
                     >
-                      {option.totalHarga}
+                      {option.gross_amount}
                     </Typography>
                   </TableCell>
                   <TableCell align="left">
@@ -233,7 +234,7 @@ const TransaksiTable = (): any => {
                       <span
                         style={{
                           backgroundColor:
-                            statusDisplay(option.status) === "error"
+                            statusDisplay(option.statusCetak) === "error"
                               ? "#f44336"
                               : "#4caf50",
                           padding: "6px 8px",
@@ -241,7 +242,7 @@ const TransaksiTable = (): any => {
                           color: "#fff",
                         }}
                       >
-                        {option.status}
+                        {option.statusCetak}
                       </span>
                     </Typography>
                   </TableCell>
