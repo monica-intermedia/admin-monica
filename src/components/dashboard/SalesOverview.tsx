@@ -107,31 +107,7 @@ const SalesOverview = () => {
   ];
 
   return (
-    <DashboardCard
-      title="Sales Overview"
-      action={
-        <Select
-          labelId="month-dd"
-          id="month-dd"
-          value={month}
-          size="small"
-          onChange={handleChange}
-        >
-          <MenuItem value={1}>January 2023</MenuItem>
-          <MenuItem value={2}>February 2023</MenuItem>
-          <MenuItem value={3}>March 2023</MenuItem>
-          <MenuItem value={4}>April 2023</MenuItem>
-          <MenuItem value={5}>May 2023</MenuItem>
-          <MenuItem value={6}>June 2023</MenuItem>
-          <MenuItem value={7}>July 2023</MenuItem>
-          <MenuItem value={8}>August 2023</MenuItem>
-          <MenuItem value={9}>September 2023</MenuItem>
-          <MenuItem value={10}>October 2023</MenuItem>
-          <MenuItem value={11}>November 2023</MenuItem>
-          <MenuItem value={12}>December 2023</MenuItem>
-        </Select>
-      }
-    >
+    <DashboardCard title="Pendapatan Mingguan">
       {dataTransaksi.length > 0 ? (
         <Chart
           options={optionscolumnchart}
