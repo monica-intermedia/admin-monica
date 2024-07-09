@@ -7,22 +7,27 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
 import axios from "axios";
-import { MenuItem, Box } from "@mui/material";
+import { MenuItem } from "@mui/material";
 
 const FormTransaksiModals: React.FC = () => {
-  const [open, setOpen] = useState(false);
+  interface KoranProps {
+    id: string;
+    keterangan: string;
+    harga: number;
+  }
 
+  const [open, setOpen] = useState(false);
+  const [koran, setKoran] = useState<KoranProps[]>([]);
   const [transaksi, setTransaksi] = useState({
     namaKoran: "",
     keterangan: "",
     eksemplar: "",
-    jumlahHalaman: "",
-    jumlahWarna: "",
-    jumlahPlate: "",
-    harga: "",
-    totalHarga: "",
+    gross_amount: 0,
     tanggal: "",
-    status: "",
+    statusCetak: "",
+    phone: "",
+    email: "",
+    id_koran: "",
   });
 
   const handleClickOpen = () => {
@@ -33,75 +38,45 @@ const FormTransaksiModals: React.FC = () => {
     setOpen(false);
   };
 
+  const fetchData = async () => {
+    const response = await axios.get("http://localhost:8080/koran");
+    setKoran(response.data.data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
-    let newTransaksi = {
-      ...transaksi,
+    setTransaksi((prevState) => ({
+      ...prevState,
       [name]: value,
-    };
+    }));
 
-    const jumlahHalaman = parseInt(newTransaksi.jumlahHalaman);
-    const jumlahWarna = parseInt(newTransaksi.jumlahWarna);
-    const eksemplar = parseInt(newTransaksi.eksemplar);
-
-    let newHarga = "";
-    let newJumlahPlate = "";
-
-    if (jumlahHalaman === 12 && jumlahWarna === 2) {
-      newHarga = "3500";
-    } else if (jumlahHalaman === 12 && jumlahWarna === 4) {
-      newHarga = "4500";
-    } else if (jumlahHalaman === 12 && jumlahWarna === 6) {
-      newHarga = "5200";
-    } else if (jumlahHalaman === 12 && jumlahWarna === 8) {
-      newHarga = "6300";
-    } else if (jumlahHalaman === 8 && jumlahWarna === 2) {
-      newHarga = "2200";
-    } else if (jumlahHalaman === 8 && jumlahWarna === 4) {
-      newHarga = "3300";
-    } else if (jumlahHalaman === 16 && jumlahWarna === 2) {
-      newHarga = "4500";
-    } else if (jumlahHalaman === 16 && jumlahWarna === 4) {
-      newHarga = "5500";
-    } else if (jumlahHalaman === 16 && jumlahWarna === 6) {
-      newHarga = "6500";
-    } else {
-      // alert("jumlah halaman dan jumlah warna tersebut belum ada");
+    if (name === "keterangan") {
+      const selectedKoran = koran.find((k) => k.id === value);
+      if (selectedKoran) {
+        setTransaksi((prevState) => ({
+          ...prevState,
+          id_koran: selectedKoran.id,
+          gross_amount: selectedKoran.harga * Number(prevState.eksemplar || 1),
+        }));
+      }
     }
 
-    if (jumlahHalaman === 8 && jumlahWarna === 2) {
-      newJumlahPlate = "7";
-    } else if (jumlahHalaman === 8 && jumlahWarna === 4) {
-      newJumlahPlate = "10";
-    } else if (jumlahHalaman === 12 && jumlahWarna === 2) {
-      newJumlahPlate = "9";
-    } else if (jumlahHalaman === 12 && jumlahWarna === 4) {
-      newJumlahPlate = "12";
-    } else if (jumlahHalaman === 16 && jumlahWarna === 2) {
-      newJumlahPlate = "12";
-    } else if (jumlahHalaman === 16 && jumlahWarna === 4) {
-      newJumlahPlate = "15";
-    } else {
-      // alert("jumlah warna tidak boleh melebihi angka tersebut");
+    if (name === "eksemplar") {
+      setTransaksi((prevState) => {
+        const selectedKoran = koran.find((k) => k.id === prevState.keterangan);
+        const newGrossAmount = selectedKoran
+          ? selectedKoran.harga * Number(value)
+          : prevState.gross_amount;
+        return {
+          ...prevState,
+          gross_amount: newGrossAmount,
+        };
+      });
     }
-
-    newTransaksi = {
-      ...newTransaksi,
-      jumlahPlate: newJumlahPlate,
-      harga: newHarga,
-    };
-
-    // Calculate total price
-    const totalHarga =
-      eksemplar && newHarga ? eksemplar * parseInt(newHarga) : "";
-
-    newTransaksi = {
-      ...newTransaksi,
-      totalHarga: totalHarga ? totalHarga.toString() : "",
-    };
-
-    setTransaksi(newTransaksi);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -113,7 +88,6 @@ const FormTransaksiModals: React.FC = () => {
       );
       console.log(response.data.data);
       window.alert("Transaksi berhasil ditambahkan");
-
       handleClose();
     } catch (error) {
       console.error("Error adding transaksi:", error);
@@ -158,6 +132,7 @@ const FormTransaksiModals: React.FC = () => {
               onChange={handleChange}
             />
             <TextField
+              select
               required
               margin="dense"
               id="keterangan"
@@ -168,106 +143,23 @@ const FormTransaksiModals: React.FC = () => {
               variant="standard"
               value={transaksi.keterangan}
               onChange={handleChange}
-            />
-            <Box display={"flex"} justifyContent={"space-between"}>
-              <TextField
-                sx={{ width: "48%" }}
-                required
-                margin="dense"
-                id="eksemplar"
-                name="eksemplar"
-                label="Masukkan eksemplar"
-                type="number"
-                fullWidth
-                variant="standard"
-                value={transaksi.eksemplar}
-                onChange={handleChange}
-              />
-              <TextField
-                sx={{ width: "48%" }}
-                required
-                margin="dense"
-                id="jumlahHalaman"
-                name="jumlahHalaman"
-                label="Masukkan jumlah halaman"
-                type="number"
-                fullWidth
-                variant="standard"
-                value={transaksi.jumlahHalaman}
-                onChange={handleChange}
-                select
-              >
-                <MenuItem value="8">8 Halaman</MenuItem>
-                <MenuItem value="12">12 Halaman</MenuItem>
-                <MenuItem value="16">16 Halaman</MenuItem>
-                <MenuItem value="24">24 Halaman</MenuItem>
-                <MenuItem value="32">32 Halaman</MenuItem>
-              </TextField>
-            </Box>
-            <Box display={"flex"} justifyContent={"space-between"}>
-              <TextField
-                sx={{ width: "48%" }}
-                required
-                margin="dense"
-                id="jumlahWarna"
-                name="jumlahWarna"
-                label="Masukkan jumlah halaman warna"
-                type="number"
-                fullWidth
-                variant="standard"
-                value={transaksi.jumlahWarna}
-                onChange={handleChange}
-                select
-              >
-                <MenuItem value="2">2 Warna</MenuItem>
-                <MenuItem value="4">4 Warna</MenuItem>
-                <MenuItem value="6">6 Warna</MenuItem>
-                <MenuItem value="8">8 Warna</MenuItem>
-                <MenuItem value="10">10 Warna</MenuItem>
-              </TextField>
-              <TextField
-                sx={{ width: "45%" }}
-                required
-                margin="dense"
-                id="jumlahPlate"
-                name="jumlahPlate"
-                label="Jumlah Plate"
-                type="number"
-                fullWidth
-                disabled
-                variant="standard"
-                value={transaksi.jumlahPlate}
-                onChange={handleChange}
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Box>
+            >
+              {koran.map((data) => (
+                <MenuItem key={data.id} value={data.id}>
+                  {data.keterangan}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               required
               margin="dense"
-              id="harga"
-              name="harga"
-              label="Harga"
+              id="eksemplar"
+              name="eksemplar"
+              label="Masukkan eksemplar"
               type="number"
               fullWidth
               variant="standard"
-              value={transaksi.harga}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
-            <TextField
-              required
-              margin="dense"
-              id="totalHarga"
-              name="totalHarga"
-              label="Total Harga"
-              type="number"
-              fullWidth
-              disabled
-              variant="standard"
-              value={transaksi.totalHarga}
+              value={transaksi.eksemplar}
               onChange={handleChange}
             />
             <TextField
@@ -282,15 +174,64 @@ const FormTransaksiModals: React.FC = () => {
               onChange={handleChange}
             />
             <TextField
+              required
+              margin="dense"
+              id="email"
+              name="email"
+              label="email"
+              type="email"
+              fullWidth
+              variant="standard"
+              value={transaksi.email}
+              onChange={handleChange}
+            />
+            <TextField
+              required
+              margin="dense"
+              id="phone"
+              name="phone"
+              label="nomor handphone"
+              type="tel"
+              fullWidth
+              variant="standard"
+              value={transaksi.phone}
+              onChange={handleChange}
+            />
+            <TextField
+              disabled
+              required
+              margin="dense"
+              id="gross_amount"
+              name="gross_amount"
+              label="jumlah harga"
+              type="number"
+              fullWidth
+              variant="standard"
+              value={transaksi.gross_amount}
+            />
+            <TextField
+              disabled
+              required
+              margin="dense"
+              id="id_koran"
+              name="id_koran"
+              label="jumlah harga"
+              type="number"
+              fullWidth
+              variant="standard"
+              value={transaksi.id_koran}
+              onChange={handleChange}
+            />
+            <TextField
               select
               required
               margin="dense"
-              id="status"
-              name="status"
+              id="statusCetak"
+              name="statusCetak"
               label="Pilih status"
               fullWidth
               variant="standard"
-              value={transaksi.status}
+              value={transaksi.statusCetak}
               onChange={handleChange}
             >
               <MenuItem value="belum-dicetak">Belum Dicetak</MenuItem>
