@@ -18,10 +18,10 @@ const FormDialogKoran = () => {
   const [open, setOpen] = useState(false);
   const [koran, setKoran] = useState({
     keterangan: "",
-    halaman: null,
-    warna: null,
-    plate: null,
-    harga: null,
+    halaman: "",
+    warna: "",
+    plate: "",
+    harga: "",
     id_barang: "",
   });
   const [barang, setBarang] = useState<BarangProps[]>([]);
@@ -47,17 +47,22 @@ const FormDialogKoran = () => {
     setOpen(false);
   };
 
-  const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-      | React.ChangeEvent<{ name?: string; value: unknown }>
-  ) => {
-    const name = e.target.name as string;
-    const value = e.target.value;
-    setKoran({
-      ...koran,
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setKoran((prevState) => ({
+      ...prevState,
       [name]: value,
-    });
+    }));
+
+    if (name === "id_barang") {
+      const selectedBarangId = barang.find((item) => item.id === value);
+      if (selectedBarangId) {
+        setKoran((prevState) => ({
+          ...prevState,
+          id_barang: selectedBarangId.id,
+        }));
+      }
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -66,6 +71,7 @@ const FormDialogKoran = () => {
     try {
       const response = await axios.post("http://localhost:8080/koran", koran);
       window.alert("Barang berhasil ditambahkan");
+      console.log(response.data.data);
       window.location.replace("/barang/halaman-koran");
     } catch (error) {
       console.error(error);
@@ -165,7 +171,6 @@ const FormDialogKoran = () => {
               variant="standard"
               fullWidth
               sx={{ my: 1, width: "45%" }}
-              value={koran.id_barang}
               onChange={handleChange}
             >
               {barang.map((item) => (
@@ -174,6 +179,18 @@ const FormDialogKoran = () => {
                 </MenuItem>
               ))}
             </TextField>
+            <TextField
+              required
+              margin="dense"
+              id="id_barang"
+              name="id_barang"
+              label="Masukan harga"
+              type="text"
+              fullWidth
+              variant="standard"
+              value={koran.id_barang}
+              onChange={handleChange}
+            />
           </DialogContent>
           <DialogActions sx={{ marginBottom: 2 }}>
             <Button onClick={handleClose}>Cancel</Button>

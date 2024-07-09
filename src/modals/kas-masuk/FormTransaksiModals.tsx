@@ -14,6 +14,8 @@ const FormTransaksiModals: React.FC = () => {
     id: string;
     keterangan: string;
     harga: number;
+    id_barang: string;
+    plate: number;
   }
 
   const [open, setOpen] = useState(false);
@@ -22,12 +24,16 @@ const FormTransaksiModals: React.FC = () => {
     namaKoran: "",
     keterangan: "",
     eksemplar: "",
-    gross_amount: 0,
+    gross_amount: "",
     tanggal: "",
+    harga: "",
     statusCetak: "",
     phone: "",
     email: "",
     id_koran: "",
+    id_barang: "",
+    quantity: "",
+    isValid: false,
   });
 
   const handleClickOpen = () => {
@@ -57,16 +63,19 @@ const FormTransaksiModals: React.FC = () => {
     if (name === "keterangan") {
       const selectedKoran = koran.find((k) => k.id === value);
       if (selectedKoran) {
-        setTransaksi((prevState) => ({
+        setTransaksi((prevState: any) => ({
           ...prevState,
           id_koran: selectedKoran.id,
           gross_amount: selectedKoran.harga * Number(prevState.eksemplar || 1),
+          quantity: selectedKoran.plate,
+          harga: selectedKoran.harga,
+          id_barang: selectedKoran.id_barang,
         }));
       }
     }
 
     if (name === "eksemplar") {
-      setTransaksi((prevState) => {
+      setTransaksi((prevState: any) => {
         const selectedKoran = koran.find((k) => k.id === prevState.keterangan);
         const newGrossAmount = selectedKoran
           ? selectedKoran.harga * Number(value)
@@ -83,10 +92,10 @@ const FormTransaksiModals: React.FC = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:8080/penjualan/transaksi",
+        "http://localhost:8080/penjualan/transaksiadmin",
         transaksi
       );
-      console.log(response.data.data);
+      console.log(response.data);
       window.alert("Transaksi berhasil ditambahkan");
       handleClose();
     } catch (error) {
@@ -162,17 +171,19 @@ const FormTransaksiModals: React.FC = () => {
               value={transaksi.eksemplar}
               onChange={handleChange}
             />
-            <TextField
-              required
-              margin="dense"
-              id="tanggal"
-              name="tanggal"
-              type="date"
-              fullWidth
-              variant="standard"
-              value={transaksi.tanggal}
-              onChange={handleChange}
-            />
+            {false && (
+              <TextField
+                required
+                margin="dense"
+                id="tanggal"
+                name="tanggal"
+                type="date"
+                fullWidth
+                variant="standard"
+                value={transaksi.tanggal}
+                onChange={handleChange}
+              />
+            )}
             <TextField
               required
               margin="dense"
@@ -209,19 +220,36 @@ const FormTransaksiModals: React.FC = () => {
               variant="standard"
               value={transaksi.gross_amount}
             />
-            <TextField
-              disabled
-              required
-              margin="dense"
-              id="id_koran"
-              name="id_koran"
-              label="jumlah harga"
-              type="number"
-              fullWidth
-              variant="standard"
-              value={transaksi.id_koran}
-              onChange={handleChange}
-            />
+            {false && (
+              <TextField
+                disabled
+                required
+                margin="dense"
+                id="quantity"
+                name="quantity"
+                label="jumlah plate"
+                type="number"
+                fullWidth
+                variant="standard"
+                value={transaksi.quantity}
+                hidden
+              />
+            )}
+
+            {false && (
+              <TextField
+                disabled
+                required
+                margin="dense"
+                id="quantity"
+                name="quantity"
+                label="jumlah plate"
+                type="number"
+                fullWidth
+                variant="standard"
+                value={transaksi.quantity}
+              />
+            )}
             <TextField
               select
               required
