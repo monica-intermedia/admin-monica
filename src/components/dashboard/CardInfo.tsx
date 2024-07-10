@@ -9,27 +9,89 @@ const CardInfo = () => {
     data: number;
   }
 
+  interface SupplierProps {
+    data: number;
+  }
+
+  interface BarangProps {
+    data: number;
+  }
+  interface TransaksiProps {
+    data: number;
+  }
+
   const [pegawai, setPegawai] = useState<PegawaiProps | null>(null);
+  const [supplier, setSupplier] = useState<SupplierProps | null>(null);
+  const [transaksi, setTransaksi] = useState<TransaksiProps | null>(null);
+  const [barang, setBarang] = useState<BarangProps | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchDataPegawai = async () => {
     try {
       const response = await axios.get(
-        process.env.backend_url + "/chart/pegawai"
+        process.env.NEXT_PUBLIC_BACKEND_URL + "/chart/pegawai"
       );
+
+      console.log(response);
       setPegawai(response.data);
       setLoading(false);
     } catch (err) {
       setError("Failed to fetch data");
       setLoading(false);
     }
+  };
 
-    console.log(pegawai);
+  const fetchDataSupplier = async () => {
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_BACKEND_URL + "/chart/supplier"
+      );
+
+      console.log(response);
+      setSupplier(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to fetch data");
+      setLoading(false);
+    }
+  };
+
+  const fetchDataBarang = async () => {
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_BACKEND_URL + "/chart/barang"
+      );
+
+      console.log(response);
+      setBarang(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to fetch data");
+      setLoading(false);
+    }
+  };
+
+  const fetchDataTransaksi = async () => {
+    try {
+      const response = await axios.get(
+        process.env.NEXT_PUBLIC_BACKEND_URL + "/chart/transaksi"
+      );
+
+      console.log(response);
+      setTransaksi(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to fetch data");
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchDataPegawai();
+    fetchDataSupplier();
+    fetchDataBarang();
+    fetchDataTransaksi();
   }, []);
 
   if (loading) {
@@ -77,7 +139,7 @@ const CardInfo = () => {
               <Stack direction="row" alignItems="center">
                 <Typography variant="h6">Rp 12.000</Typography>
                 <Typography color="textSecondary" ml={1}>
-                  123adawd
+                  {supplier ? `${supplier.data} Supplier` : "No data available"}
                 </Typography>
               </Stack>
             </Stack>
@@ -99,7 +161,7 @@ const CardInfo = () => {
               <Stack direction="row" alignItems="center">
                 <Typography variant="h6">Rp 12.000</Typography>
                 <Typography color="textSecondary" ml={1}>
-                  123adawd
+                  {barang ? `${barang.data} Barang` : "No data available"}
                 </Typography>
               </Stack>
             </Stack>
@@ -121,7 +183,9 @@ const CardInfo = () => {
               <Stack direction="row" alignItems="center">
                 <Typography variant="h6">Rp 12.000</Typography>
                 <Typography color="textSecondary" ml={1}>
-                  123adawd
+                  {transaksi
+                    ? `${transaksi.data} Transaksi`
+                    : "No data available"}
                 </Typography>
               </Stack>
             </Stack>
