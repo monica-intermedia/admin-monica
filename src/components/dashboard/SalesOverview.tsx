@@ -1,40 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { Select, MenuItem } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
 import dynamic from "next/dynamic";
 import axios from "axios";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-interface TransaksiProps {
+interface PendapatanProps {
   date: string;
-  totalAmount: number;
+  gross_amount: number;
 }
 
 const SalesOverview = () => {
-  const [month, setMonth] = useState("1");
-  const [dataTransaksi, setDataTransaksi] = useState<TransaksiProps[]>([]);
-  const [pendapatan, setPendapatan] = useState<number[]>([]);
+  const [pendapatan, setPendapatan] = useState<PendapatanProps[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchDataTransaksi = async (selectedMonth: string) => {
+  const fetchData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/chart/pembelian?month=${selectedMonth}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/chart/pendapatanmingguan`
       );
-      setDataTransaksi(response.data.data || []); // Ensure data is not undefined
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setDataTransaksi([]); // Handle error by setting data to an empty array
+      setPendapatan(response.data.data || []); // Ensure data is an array
+    } catch (err) {
+      setError("Error fetching data");
+      console.error("Error fetching data:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDataTransaksi(month);
-  }, [month]);
-
-  const handleChange = (event: any) => {
-    setMonth(event.target.value);
-  };
+    fetchData();
+  }, []);
 
   // Chart color
   const theme = useTheme();
@@ -88,7 +85,7 @@ const SalesOverview = () => {
       tickAmount: 4,
     },
     xaxis: {
-      categories: dataTransaksi.map((item) => item.date),
+      categories: pendapatan.map((item) => item.date) || [],
       axisBorder: {
         show: false,
       },
@@ -101,14 +98,22 @@ const SalesOverview = () => {
 
   const seriescolumnchart: any = [
     {
-      name: "Expense this month",
-      data: dataTransaksi.map((item) => item.totalAmount),
+      name: "Pendapatan Harian",
+      data: pendapatan.map((item) => item.gross_amount) || [],
     },
   ];
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
   return (
-    <DashboardCard title="Pendapatan Mingguan">
-      {dataTransaksi.length > 0 ? (
+    <DashboardCard title="Pendapatan Harian">
+      {pendapatan.length > 0 ? (
         <Chart
           options={optionscolumnchart}
           series={seriescolumnchart}
@@ -116,7 +121,7 @@ const SalesOverview = () => {
           height="370px"
         />
       ) : (
-        <p>No data available for the selected month.</p>
+        <p>No data available for the selected period.</p>
       )}
     </DashboardCard>
   );
