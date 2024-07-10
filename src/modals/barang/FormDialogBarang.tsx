@@ -7,7 +7,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import { IconPlus } from "@tabler/icons-react";
 import axios from "axios";
-import { useRouter } from "next/router";
 
 const FormDialogBarang = () => {
   const [open, setOpen] = useState(false);

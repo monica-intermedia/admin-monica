@@ -3,6 +3,12 @@ import { Stack } from "@mui/system";
 import BlankCard from "../../../src/components/shared/BlankCard";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import {
+  HiMiniUserGroup,
+  HiMiniTruck,
+  HiCube,
+  HiCurrencyDollar,
+} from "react-icons/hi2";
 
 const CardInfo = () => {
   interface PegawaiProps {
@@ -115,8 +121,10 @@ const CardInfo = () => {
               mt={1}
             >
               <Stack direction="row" alignItems="center">
-                <Typography variant="h6">Rp 12.000</Typography>
-                <Typography color="textSecondary" ml={1}>
+                <Typography variant="h6">
+                  <HiMiniUserGroup size={70} />
+                </Typography>
+                <Typography color="textSecondary" fontSize={20} ml={4}>
                   {pegawai ? `${pegawai.data} orang` : "No data available"}
                 </Typography>
               </Stack>
@@ -137,8 +145,10 @@ const CardInfo = () => {
               mt={1}
             >
               <Stack direction="row" alignItems="center">
-                <Typography variant="h6">Rp 12.000</Typography>
-                <Typography color="textSecondary" ml={1}>
+                <Typography variant="h6">
+                  <HiMiniTruck size={70} />
+                </Typography>
+                <Typography color="textSecondary" fontSize={20} ml={2}>
                   {supplier ? `${supplier.data} Supplier` : "No data available"}
                 </Typography>
               </Stack>
@@ -159,8 +169,10 @@ const CardInfo = () => {
               mt={1}
             >
               <Stack direction="row" alignItems="center">
-                <Typography variant="h6">Rp 12.000</Typography>
-                <Typography color="textSecondary" ml={1}>
+                <Typography variant="h6">
+                  <HiCube size={70} />
+                </Typography>
+                <Typography color="textSecondary" fontSize={20} ml={2}>
                   {barang ? `${barang.data} Barang` : "No data available"}
                 </Typography>
               </Stack>
@@ -181,8 +193,10 @@ const CardInfo = () => {
               mt={1}
             >
               <Stack direction="row" alignItems="center">
-                <Typography variant="h6">Rp 12.000</Typography>
-                <Typography color="textSecondary" ml={1}>
+                <Typography variant="h6">
+                  <HiCurrencyDollar size={70} />
+                </Typography>
+                <Typography color="textSecondary" fontSize={20} ml={2}>
                   {transaksi
                     ? `${transaksi.data} Transaksi`
                     : "No data available"}
