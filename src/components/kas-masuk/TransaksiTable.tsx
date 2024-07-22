@@ -15,7 +15,6 @@ import DashboardCard from "../shared/DashboardCard";
 import dayjs from "dayjs";
 import axios from "axios";
 import { HiCheck } from "react-icons/hi";
-import FormTransaksiModals from "../../modals/kas-masuk/FormTransaksiModals";
 
 const TransaksiTable = (): any => {
   interface KoranProps {
@@ -87,11 +86,10 @@ const TransaksiTable = (): any => {
   };
 
   return (
-    <DashboardCard title="Tabel Transaksi">
+    <DashboardCard title="Tabel Daftar Cetak">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">
-            <FormTransaksiModals />
             <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
               <IconPrinter />
             </Button>
@@ -101,7 +99,7 @@ const TransaksiTable = (): any => {
             <form>
               <TextField
                 id="search-bar"
-                label="Masukkan nama barang"
+                label="Masukkan nama koran"
                 variant="outlined"
                 placeholder="Search..."
                 size="small"

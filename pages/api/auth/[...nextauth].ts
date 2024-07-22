@@ -24,6 +24,9 @@ const authOptions: NextAuthOptions = {
         const { email, password }: any = credentials;
         const payload = { email, password };
 
+        console.log(email);
+        console.log(password);
+
         try {
           const res = await fetch("http://localhost:8080/auth/login", {
             method: "POST",
@@ -35,7 +38,6 @@ const authOptions: NextAuthOptions = {
             const user: User = await res.json(); // Pastikan respon sesuai dengan tipe User
             return user;
           } else {
-            alert("email atau password salah");
             return null; // Handle kegagalan autentikasi
           }
         } catch (error) {

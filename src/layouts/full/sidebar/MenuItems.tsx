@@ -58,7 +58,7 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "Transaksi",
+    title: "Daftar Koran Cetak",
     icon: IconCurrencyDollar,
     href: "/kas-masuk/transaksi",
   },

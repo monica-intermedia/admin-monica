@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { styled } from "@mui/material";
+import { styled, Box } from "@mui/material";
 import Image from "next/image";
+import { FcFeedIn } from "react-icons/fc";
 
 const LinkStyled = styled(Link)(() => ({
   height: "70px",
@@ -12,13 +13,16 @@ const LinkStyled = styled(Link)(() => ({
 const Logo = () => {
   return (
     <LinkStyled href="/">
-      <Image
-        src="/images/logos/dark-logo.svg"
-        alt="logo"
-        height={70}
-        width={174}
-        priority
-      />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mt: 2,
+        }}
+      >
+        <FcFeedIn size={50} />
+      </Box>
     </LinkStyled>
   );
 };
