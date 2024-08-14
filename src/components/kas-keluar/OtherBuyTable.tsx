@@ -54,6 +54,22 @@ const OtherBuyTable = (): any => {
     }
   };
 
+  const handlePrint = () => {
+    const printUrl = `http://localhost:3000/kas-keluar/pembelian-lainya/print`;
+    const printWindow = window.open(printUrl, "_blank");
+
+    if (printWindow) {
+      const printCheckInterval = setInterval(() => {
+        if (printWindow.document.readyState === "complete") {
+          clearInterval(printCheckInterval);
+          printWindow.print();
+        }
+      }, 5000);
+    } else {
+      console.error("Failed to open the print window.");
+    }
+  };
+
   return (
     <DashboardCard title="Tabel Pembelian Lainya">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
@@ -61,7 +77,7 @@ const OtherBuyTable = (): any => {
           <Box display="flex">
             <FormPembelianLainya />
             <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
-              <IconPrinter />
+              <IconPrinter onClick={handlePrint} />
             </Button>
           </Box>
           <Box>

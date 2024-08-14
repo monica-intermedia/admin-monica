@@ -30,7 +30,7 @@ const PositionTable = (): React.ReactElement => {
   useFetchData("http://localhost:8080/pelanggan/supplier", setSupplier);
 
   return (
-    <DashboardCard title="Tabel Jabatan">
+    <DashboardCard title="Tabel Supplier">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">

@@ -1,114 +1,82 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import axios from "axios";
+import dayjs from "dayjs";
 import {
-  Typography,
+  Container,
   Box,
+  TableContainer,
   Table,
-  TableBody,
-  TableCell,
   TableHead,
   TableRow,
-  Button,
-  TextField,
+  TableCell,
+  TableBody,
+  Typography,
 } from "@mui/material";
-import { IconPrinter } from "@tabler/icons-react";
-import DashboardCard from "../../shared/DashboardCard";
-import Link from "next/link";
-import FormDialogPegawai from "../../../modals/pegawai/FormDialogPegawai";
-import axios from "axios";
 
-interface Jabatan {
-  jabatan: string;
-}
+const Index = () => {
+  interface Jabatan {
+    jabatan: string;
+  }
 
-interface Staff {
-  id: string;
-  nip: string;
-  name: string;
-  alamat: string;
-  email: string;
-  handphone: string;
-  jabatan?: Jabatan;
-}
-
-const PositionTable = (): React.ReactElement => {
-  const [staff, setStaff] = useState<Staff[]>([]);
+  interface Staff {
+    id: string;
+    nip: string;
+    name: string;
+    alamat: string;
+    email: string;
+    handphone: string;
+    jabatan?: Jabatan;
+  }
+  const [data, setData] = React.useState<Staff[]>([]);
 
   const fetchData = async () => {
-    const response = await axios.get("http://localhost:8080/pegawai/pegawai");
-    setStaff(response.data.data);
-  };
-
-  const deleteItem = async (id: string) => {
     try {
-      const confirm = window.confirm("are you sure delete this item?");
-
-      if (confirm) {
-        await axios.delete(`http://localhost:8080/pegawai/pegawai/${id}`);
-      }
+      const response = await axios.get("http://localhost:8080/pegawai/pegawai");
+      setData(response.data.data);
     } catch (error) {
-      console.error("fail to delete data", error);
+      console.error("Error fetching data:", error);
     }
   };
 
-  const handlePrint = () => {
-    const printUrl = `http://localhost:3000/pegawai/data-pegawai/print`;
-    const printWindow = window.open(printUrl, "_blank");
-
-    if (printWindow) {
-      const printCheckInterval = setInterval(() => {
-        if (printWindow.document.readyState === "complete") {
-          clearInterval(printCheckInterval);
-          printWindow.print();
-        }
-      }, 8000);
-    } else {
-      console.error("Failed to open the print window.");
-    }
-  };
-
-  useEffect(() => {
+  React.useEffect(() => {
     fetchData();
   }, []);
 
+  const formatDate = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    return new Date(date).toLocaleDateString(undefined, options);
+  };
+
   return (
-    <DashboardCard title="Tabel Pegawai">
-      <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
-        <Box>
-          <Box display="flex">
-            <FormDialogPegawai />
-            <Button
-              variant="contained"
-              style={{
-                paddingRight: "20px",
-                paddingLeft: "20px",
-                marginLeft: "20px",
-              }}
-            >
-              <IconPrinter onClick={handlePrint} />
-            </Button>
-          </Box>
-          <Box>
-            <br />
-            <form>
-              <TextField
-                id="search-bar"
-                className="text"
-                label="masukan nama pegawai"
-                variant="outlined"
-                placeholder="Search..."
-                size="small"
-                sx={{ width: 1 / 3 }}
-              />
-            </form>
-          </Box>
-        </Box>
-        <Table
-          aria-label="simple table"
-          sx={{
-            whiteSpace: "nowrap",
-            mt: 2,
-          }}
-        >
+    <Container>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mx: "auto",
+          width: "auto",
+        }}
+      >
+        <h1>Monica Intermedia Grafika</h1>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mx: "auto",
+          width: "auto",
+        }}
+      >
+        <h2>Daftar Pegawai</h2>
+      </Box>
+      <TableContainer>
+        <Table sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow>
               <TableCell>
@@ -149,7 +117,7 @@ const PositionTable = (): React.ReactElement => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {staff.map((staff, index) => (
+            {data.map((staff, index) => (
               <TableRow key={staff.id}>
                 <TableCell>
                   <Typography
@@ -300,30 +268,13 @@ const PositionTable = (): React.ReactElement => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell>
-                  <Link
-                    href={`/pegawai/data-pegawai/${staff.id}`}
-                    style={{ marginRight: "10px" }}
-                  >
-                    <Button variant="outlined">Edit</Button>
-                  </Link>
-                  <Link href="#" passHref>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => deleteItem(staff.id)}
-                    >
-                      Delete
-                    </Button>
-                  </Link>
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-      </Box>
-    </DashboardCard>
+      </TableContainer>
+    </Container>
   );
 };
 
-export default PositionTable;
+export default Index;

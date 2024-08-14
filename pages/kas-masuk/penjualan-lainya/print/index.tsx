@@ -1,22 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { IconPrinter } from "@tabler/icons-react";
+import React from "react";
+import axios from "axios";
+import dayjs from "dayjs";
 import {
-  Typography,
+  Container,
   Box,
+  TableContainer,
   Table,
-  TableBody,
-  TableCell,
   TableHead,
   TableRow,
-  Button,
-  TextField,
+  TableCell,
+  TableBody,
+  Typography,
 } from "@mui/material";
-import DashboardCard from "../shared/DashboardCard";
-import dayjs from "dayjs";
-import axios from "axios";
-import FormOtherSellModals from "../../modals/kas-masuk/FormOtherSellModals";
 
-const OthersaleTable = (): any => {
+const Index = () => {
   interface PenjualanProps {
     id: string;
     kodePenjualan: string;
@@ -25,77 +22,58 @@ const OthersaleTable = (): any => {
     totalHarga: number;
     keterangan: string;
   }
-
-  const [penjualanLainya, setPenjualanLainya] = useState<PenjualanProps[]>([]);
+  const [data, setData] = React.useState<PenjualanProps[]>([]);
 
   const fetchData = async () => {
-    const response = await axios.get(
-      "http://localhost:8080/kasmasuk/penjualanlainya"
-    );
-    setPenjualanLainya(response.data.data);
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/kasmasuk/penjualanlainya"
+      );
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchData();
   }, []);
 
-  console.log(penjualanLainya);
-
-  const deleteItem = async (id: string) => {
-    try {
-      const confirmed = window.confirm(
-        "Are you sure you want to delete this item?"
-      );
-      if (confirmed) {
-        await axios.delete(
-          `http://localhost:8080/kasmasuk/penjualanlainya/${id}`
-        );
-      }
-    } catch (error) {
-      console.error("Error deleting item:", error);
-    }
-  };
-
-  const handlePrint = () => {
-    const printUrl = `http://localhost:3000/kas-masuk/penjualan-lainya/print`;
-    const printWindow = window.open(printUrl, "_blank");
-    if (printWindow) {
-      const printCheckInterval = setInterval(() => {
-        if (printWindow.document.readyState === "complete") {
-          clearInterval(printCheckInterval);
-          printWindow.print();
-        }
-      }, 5000);
-    } else {
-      console.error("Failed to open the print window.");
-    }
+  const formatDate = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    return new Date(date).toLocaleDateString(undefined, options);
   };
 
   return (
-    <DashboardCard title="Tabel Penjualan Lainya">
-      <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
-        <Box>
-          <Box display="flex">
-            <FormOtherSellModals />
-            <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
-              <IconPrinter onClick={handlePrint} />
-            </Button>
-          </Box>
-          <Box>
-            <br />
-            <form>
-              <TextField
-                id="search-bar"
-                label="Masukkan nama barang"
-                variant="outlined"
-                placeholder="Search..."
-                size="small"
-                sx={{ width: 1 / 3 }}
-              />
-            </form>
-          </Box>
-        </Box>
-        <Table aria-label="simple table" sx={{ whiteSpace: "nowrap", mt: 2 }}>
+    <Container>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mx: "auto",
+          width: "auto",
+        }}
+      >
+        <h1>Monica Intermedia Grafika</h1>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mx: "auto",
+          width: "auto",
+        }}
+      >
+        <h2>Daftar Penjualan Lainya</h2>
+      </Box>
+      <TableContainer>
+        <Table sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow>
               <TableCell>
@@ -128,16 +106,11 @@ const OthersaleTable = (): any => {
                   Keterangan
                 </Typography>
               </TableCell>
-              <TableCell align="right">
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Action
-                </Typography>
-              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.isArray(penjualanLainya) && penjualanLainya.length > 0 ? (
-              penjualanLainya.map((option, index) => (
+            {data.length > 0 ? (
+              data.map((option, index) => (
                 <TableRow key={option.id}>
                   <TableCell>
                     <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -149,7 +122,6 @@ const OthersaleTable = (): any => {
                       {option.kodePenjualan}
                     </Typography>
                   </TableCell>
-
                   <TableCell>
                     <Typography color="textSecondary" sx={{ fontSize: "13px" }}>
                       {option.namaPenjualan}
@@ -182,18 +154,6 @@ const OthersaleTable = (): any => {
                       {option.keterangan}
                     </Typography>
                   </TableCell>
-                  <TableCell align="right">
-                    <Button variant="outlined" sx={{ marginRight: "10px" }}>
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => deleteItem(option.id!)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -205,9 +165,9 @@ const OthersaleTable = (): any => {
             )}
           </TableBody>
         </Table>
-      </Box>
-    </DashboardCard>
+      </TableContainer>
+    </Container>
   );
 };
 
-export default OthersaleTable;
+export default Index;

@@ -54,3 +54,19 @@ export const addItem = async (link: string, requestingData: any) => {
     return null;
   }
 };
+
+export const handlePrint = (link: any) => {
+  const printUrl = `http://localhost:3000/${link}`;
+  const printWindow = window.open(printUrl, "_blank");
+
+  if (printWindow) {
+    const printCheckInterval = setInterval(() => {
+      if (printWindow.document.readyState === "complete") {
+        clearInterval(printCheckInterval);
+        printWindow.print();
+      }
+    }, 5000);
+  } else {
+    console.error("Failed to open the print window.");
+  }
+};

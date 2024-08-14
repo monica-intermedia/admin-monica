@@ -84,6 +84,22 @@ const DataTransaksiTable = (): any => {
     }
   };
 
+  const handlePrint = () => {
+    const printUrl = `http://localhost:3000/kas-masuk/data-transaksi/print`;
+    const printWindow = window.open(printUrl, "_blank");
+
+    if (printWindow) {
+      const printCheckInterval = setInterval(() => {
+        if (printWindow.document.readyState === "complete") {
+          clearInterval(printCheckInterval);
+          printWindow.print();
+        }
+      }, 5000);
+    } else {
+      console.error("Failed to open the print window.");
+    }
+  };
+
   return (
     <DashboardCard title="Tabel Data Transaksi">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
@@ -91,7 +107,7 @@ const DataTransaksiTable = (): any => {
           <Box display="flex">
             <FormTransaksiModals />
             <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
-              <IconPrinter />
+              <IconPrinter onClick={handlePrint} />
             </Button>
           </Box>
           <Box>

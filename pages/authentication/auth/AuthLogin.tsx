@@ -23,7 +23,6 @@ interface loginType {
 
 const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
   const { data } = useSession();
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -33,14 +32,19 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
       password,
       callbackUrl: `${window.location.origin}/`,
     });
-    if (result?.error) {
+    console.log(result);
+
+    if (!result) {
+      window.alert("Login gagal");
+    } else if (result.error) {
       // Handle sign-in error
+      window.alert("Email atau password salah");
       console.error("Sign-in error:", result.error);
     } else {
       // Redirect to localhost:3000 upon successful sign-in
+      window.alert("Berhasil Login");
       window.location.href = "http://localhost:3000";
     }
-    console.log(result);
   };
 
   return (

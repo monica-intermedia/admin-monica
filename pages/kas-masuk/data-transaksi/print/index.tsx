@@ -1,31 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { IconPrinter } from "@tabler/icons-react";
+import React from "react";
+import axios from "axios";
+import dayjs from "dayjs";
 import {
-  Typography,
+  Container,
   Box,
+  TableContainer,
   Table,
-  TableBody,
-  TableCell,
   TableHead,
   TableRow,
-  Button,
-  TextField,
+  TableCell,
+  TableBody,
+  Typography,
 } from "@mui/material";
-import DashboardCard from "../shared/DashboardCard";
-import dayjs from "dayjs";
-import axios from "axios";
-import { HiCheck } from "react-icons/hi";
 
-const TransaksiTable = (): any => {
+const Index = () => {
   interface KoranProps {
+    keterangan: string;
     halaman: number;
-    warna: number;
     plate: number;
     harga: number;
+    warna: number;
   }
   interface Pembelian {
     id: string;
     namaKoran: string;
+    keteranggan: string;
     eksemplar: number;
     gross_amount: number;
     statusCetak: string;
@@ -33,98 +32,58 @@ const TransaksiTable = (): any => {
     koran: KoranProps;
   }
 
-  const [transaksi, setTransaksi] = useState<Pembelian[]>([]);
+  const [data, setData] = React.useState<Pembelian[]>([]);
 
   const fetchData = async () => {
-    const response = await axios.get(
-      "http://localhost:8080/penjualan/transaksistatus"
-    );
-    setTransaksi(response.data.data);
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/penjualan/transaksi"
+      );
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchData();
   }, []);
 
-  const statusDisplay = (status: string) => {
-    if (status === "belum-dicetak") {
-      return "error";
-    } else {
-      return "success";
-    }
-  };
-
-  const deleteItem = async (id: string) => {
-    try {
-      const confirmed = window.confirm(
-        "Are you sure you want to delete this item?"
-      );
-      if (confirmed) {
-        await axios.delete(`http://localhost:8080/penjualan/transaksi/${id}`);
-      }
-    } catch (error) {
-      console.error("Error deleting item:", error);
-    }
-  };
-
-  const checklist = async (id: string) => {
-    try {
-      const confirmed = window.confirm(
-        "Are you sure you want to update this item?"
-      );
-      if (confirmed) {
-        await axios.put(`http://localhost:8080/penjualan/transaksi/${id}`, {
-          statusCetak: "sudah-dicetak",
-          isValid: true,
-        });
-        fetchData();
-      }
-    } catch (error) {
-      console.error("Error updating item:", error);
-      window.alert("Failed to update item");
-    }
-  };
-
-  const handlePrint = () => {
-    const printUrl = `http://localhost:3000/kas-masuk/transaksi/print`;
-    const printWindow = window.open(printUrl, "_blank");
-
-    if (printWindow) {
-      const printCheckInterval = setInterval(() => {
-        if (printWindow.document.readyState === "complete") {
-          clearInterval(printCheckInterval);
-          printWindow.print();
-        }
-      }, 5000);
-    } else {
-      console.error("Failed to open the print window.");
-    }
+  const formatDate = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+    return new Date(date).toLocaleDateString(undefined, options);
   };
 
   return (
-    <DashboardCard title="Tabel Daftar Cetak">
-      <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
-        <Box>
-          <Box display="flex">
-            <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
-              <IconPrinter onClick={handlePrint} />
-            </Button>
-          </Box>
-          <Box>
-            <br />
-            <form>
-              <TextField
-                id="search-bar"
-                label="Masukkan nama koran"
-                variant="outlined"
-                placeholder="Search..."
-                size="small"
-                sx={{ width: 1 / 3 }}
-              />
-            </form>
-          </Box>
-        </Box>
-        <Table aria-label="simple table" sx={{ whiteSpace: "nowrap", mt: 2 }}>
+    <Container>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mx: "auto",
+          width: "auto",
+        }}
+      >
+        <h1>Monica Intermedia Grafika</h1>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mx: "auto",
+          width: "auto",
+        }}
+      >
+        <h2>Daftar Transaksi</h2>
+      </Box>
+      <TableContainer>
+        <Table sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow>
               <TableCell>
@@ -172,16 +131,11 @@ const TransaksiTable = (): any => {
                   Status
                 </Typography>
               </TableCell>
-              <TableCell align="left">
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Action
-                </Typography>
-              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.isArray(transaksi) && transaksi.length > 0 ? (
-              transaksi.map((option, index) => (
+            {data.length > 0 ? (
+              data.map((option, index) => (
                 <TableRow key={option.id}>
                   <TableCell>
                     <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -245,38 +199,8 @@ const TransaksiTable = (): any => {
                   </TableCell>
                   <TableCell align="left">
                     <Typography variant="subtitle2" fontWeight={400}>
-                      <span
-                        style={{
-                          backgroundColor:
-                            statusDisplay(option.statusCetak) === "error"
-                              ? "#f44336"
-                              : "#4caf50",
-                          padding: "6px 8px",
-                          borderRadius: "4px",
-                          color: "#fff",
-                        }}
-                      >
-                        {option.statusCetak}
-                      </span>
+                      {option.statusCetak}
                     </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={() => checklist(option.id)}
-                      sx={{ borderRadius: "16px" }}
-                    >
-                      <HiCheck />
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => deleteItem(option.id)}
-                      sx={{ borderRadius: "16px", ml: 1 }}
-                    >
-                      Delete
-                    </Button>
                   </TableCell>
                 </TableRow>
               ))
@@ -289,9 +213,9 @@ const TransaksiTable = (): any => {
             )}
           </TableBody>
         </Table>
-      </Box>
-    </DashboardCard>
+      </TableContainer>
+    </Container>
   );
 };
 
-export default TransaksiTable;
+export default Index;

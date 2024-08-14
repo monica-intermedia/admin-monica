@@ -65,7 +65,7 @@ const FormDialogSupplier: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <DialogContent style={{ width: "550px" }}>
             <DialogContentText>
-              <h2>Masukan Pegawai</h2>
+              <h2>Masukan Supplier</h2>
             </DialogContentText>
             <TextField
               autoFocus

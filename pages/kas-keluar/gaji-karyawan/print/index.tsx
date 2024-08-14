@@ -1,29 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { IconPrinter } from "@tabler/icons-react";
+import React from "react";
+import axios from "axios";
+import dayjs from "dayjs";
 import {
-  Typography,
+  Container,
   Box,
+  TableContainer,
   Table,
-  TableBody,
-  TableCell,
   TableHead,
   TableRow,
-  Button,
-  TextField,
+  TableCell,
+  TableBody,
+  Typography,
 } from "@mui/material";
-import DashboardCard from "../shared/DashboardCard";
-import dayjs from "dayjs";
-import axios from "axios";
-import FormDialoGaji from "../../modals/kas-keluar/FormDialogGaji";
-import { handlePrint } from "../../action/actions";
-
-const OtherBuyTable = (): any => {
+const Index = () => {
   interface StaffProps {
     name: string;
     nip: string;
     gaji: number;
   }
-
   interface GajiProps {
     id: string;
     bpjs: number;
@@ -34,71 +28,49 @@ const OtherBuyTable = (): any => {
     pegawai: StaffProps;
   }
 
-  const [gaji, setGaji] = useState<GajiProps[]>([]);
+  const [data, setData] = React.useState<GajiProps[]>([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get("http://localhost:8080/pegawai/gaji");
-      setGaji(response.data.data);
-    };
+  const link = "pegawai/gaji";
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/${link}`);
+      setData(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  React.useEffect(() => {
     fetchData();
   }, []);
 
-  const deleteItem = async (id: string) => {
-    try {
-      const confirmed = window.confirm(
-        "Are you sure you want to delete this item?"
-      );
-      if (confirmed) {
-        await axios.delete(`http://localhost:8080/pegawai/gaji/${id}`);
-        setGaji((prevGaji) => prevGaji.filter((item) => item.id !== id));
-      }
-    } catch (error) {
-      console.error("Error deleting item:", error);
-    }
-  };
-
-  const handlePrint = () => {
-    const printUrl = `http://localhost:3000/kas-keluar/gaji-karyawan/print`;
-    const printWindow = window.open(printUrl, "_blank");
-
-    if (printWindow) {
-      const printCheckInterval = setInterval(() => {
-        if (printWindow.document.readyState === "complete") {
-          clearInterval(printCheckInterval);
-          printWindow.print();
-        }
-      }, 5000);
-    } else {
-      console.error("Failed to open the print window.");
-    }
-  };
-
   return (
-    <DashboardCard title="Tabel Gaji Karyawan">
-      <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
-        <Box>
-          <Box display="flex">
-            <FormDialoGaji />
-            <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
-              <IconPrinter onClick={handlePrint} />
-            </Button>
-          </Box>
-          <Box>
-            <br />
-            <form>
-              <TextField
-                id="search-bar"
-                label="Masukkan nama barang"
-                variant="outlined"
-                placeholder="Search..."
-                size="small"
-                sx={{ width: 1 / 3 }}
-              />
-            </form>
-          </Box>
-        </Box>
-        <Table aria-label="simple table" sx={{ whiteSpace: "nowrap", mt: 2 }}>
+    <Container>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mx: "auto",
+          width: "auto",
+        }}
+      >
+        <h1>Monica Intermedia Grafika</h1>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mx: "auto",
+          width: "auto",
+        }}
+      >
+        <h2>Gaji Karyawan</h2>
+      </Box>
+      <TableContainer>
+        <Table sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow>
               <TableCell>
@@ -141,16 +113,11 @@ const OtherBuyTable = (): any => {
                   Total Gaji
                 </Typography>
               </TableCell>
-              <TableCell align="right">
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Action
-                </Typography>
-              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.isArray(gaji) && gaji.length > 0 ? (
-              gaji.map((option, index) => (
+            {data.length > 0 ? (
+              data.map((option, index) => (
                 <TableRow key={option.id}>
                   <TableCell>
                     <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -196,18 +163,6 @@ const OtherBuyTable = (): any => {
                       {option.jumlahGaji}
                     </Typography>
                   </TableCell>
-                  <TableCell align="right">
-                    <Button variant="outlined" sx={{ marginRight: "10px" }}>
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => deleteItem(option.id!)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -219,9 +174,9 @@ const OtherBuyTable = (): any => {
             )}
           </TableBody>
         </Table>
-      </Box>
-    </DashboardCard>
+      </TableContainer>
+    </Container>
   );
 };
 
-export default OtherBuyTable;
+export default Index;

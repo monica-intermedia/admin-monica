@@ -37,6 +37,9 @@ const BuyInventoryTable = (): any => {
   }
 
   const [pembelianBarang, setPembelianBarang] = useState<Pembelian[]>([]);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [filteredData, setFilteredData] = useState<Pembelian[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,6 +55,27 @@ const BuyInventoryTable = (): any => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    filterData();
+  }, [startDate, endDate, pembelianBarang]);
+
+  const filterData = () => {
+    if (!startDate || !endDate) {
+      setFilteredData(pembelianBarang);
+      return;
+    }
+
+    const filtered = pembelianBarang.filter((item) => {
+      const itemDate = dayjs(item.tanggal);
+      return (
+        itemDate.isAfter(dayjs(startDate).subtract(1, "day")) &&
+        itemDate.isBefore(dayjs(endDate).add(1, "day"))
+      );
+    });
+
+    setFilteredData(filtered);
+  };
 
   const deleteItem = async (id: string) => {
     const confirmed = window.confirm(
@@ -74,6 +98,22 @@ const BuyInventoryTable = (): any => {
     }
   };
 
+  const handlePrint = () => {
+    const printUrl = `http://localhost:3000/kas-keluar/pembelian-barang/print`;
+    const printWindow = window.open(printUrl, "_blank");
+
+    if (printWindow) {
+      const printCheckInterval = setInterval(() => {
+        if (printWindow.document.readyState === "complete") {
+          clearInterval(printCheckInterval);
+          printWindow.print();
+        }
+      }, 5000);
+    } else {
+      console.error("Failed to open the print window.");
+    }
+  };
+
   return (
     <DashboardCard title="Tabel Pembelian Barang">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
@@ -81,7 +121,7 @@ const BuyInventoryTable = (): any => {
           <Box display="flex">
             <FormDialog />
             <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
-              <IconPrinter />
+              <IconPrinter onClick={handlePrint} />
             </Button>
           </Box>
           <Box>
@@ -96,6 +136,29 @@ const BuyInventoryTable = (): any => {
                 sx={{ width: 1 / 3 }}
               />
             </form>
+          </Box>
+          <Box>
+            <TextField
+              id="start-date"
+              label="Tanggal Mulai"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              sx={{ marginRight: 2 }}
+            />
+            <TextField
+              id="end-date"
+              label="Tanggal Akhir"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
           </Box>
         </Box>
         <Table aria-label="simple table" sx={{ whiteSpace: "nowrap", mt: 2 }}>
@@ -144,8 +207,8 @@ const BuyInventoryTable = (): any => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {pembelianBarang.length > 0 ? (
-              pembelianBarang.map((pembelian, index) => (
+            {filteredData.length > 0 ? (
+              filteredData.map((pembelian, index) => (
                 <TableRow key={pembelian.id}>
                   <TableCell>
                     <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
