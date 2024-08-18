@@ -53,7 +53,7 @@ const FormPembelianLainya = () => {
       };
       fetchData();
 
-      window.location.replace("/kas-masuk/penjualan-lainya");
+      window.location.replace("/kas-keluar/pembelian-lainya");
 
       handleClose();
     } catch (error) {

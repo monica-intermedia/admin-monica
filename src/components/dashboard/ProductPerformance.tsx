@@ -10,47 +10,48 @@ import {
   Chip,
 } from "@mui/material";
 import DashboardCard from "../../../src/components/shared/DashboardCard";
+import axios from "axios";
+import dayjs from "dayjs";
 
-const products = [
-  {
-    id: "1",
-    name: "Sunil Joshi",
-    post: "Web Designer",
-    pname: "Elite Admin",
-    priority: "Low",
-    pbg: "primary.main",
-    budget: "3.9",
-  },
-  {
-    id: "2",
-    name: "Andrew McDownland",
-    post: "Project Manager",
-    pname: "Real Homes WP Theme",
-    priority: "Medium",
-    pbg: "secondary.main",
-    budget: "24.5",
-  },
-  {
-    id: "3",
-    name: "Christopher Jamil",
-    post: "Project Manager",
-    pname: "MedicalPro WP Theme",
-    priority: "High",
-    pbg: "error.main",
-    budget: "12.8",
-  },
-  {
-    id: "4",
-    name: "Nirav Joshi",
-    post: "Frontend Engineer",
-    pname: "Hosting Press HTML",
-    priority: "Critical",
-    pbg: "success.main",
-    budget: "2.4",
-  },
-];
+interface PegawaiProps {
+  name: string;
+  nip: number;
+}
+
+interface AbsenProps {
+  id: string;
+  tanggal: Date;
+  waktuMasuk: string;
+  keterangan: string;
+  pegawai: PegawaiProps;
+}
 
 const Absensi = () => {
+  const [absensi, setAbsensi] = React.useState<AbsenProps[]>([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/pegawai/absensi`
+      );
+      setAbsensi(response.data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  const statusDisplay = (status: string) => {
+    if (status === "Tepat Waktu") {
+      return "success";
+    } else {
+      return "error";
+    }
+  };
+
   return (
     <DashboardCard title="Absen Karyawan">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
@@ -65,34 +66,39 @@ const Absensi = () => {
             <TableRow>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Id
+                  No
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Assigned
+                  Nama Pegawai
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Name
+                  NIP
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Priority
+                  tanggal
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Budget
+                  Keterangan
+                </Typography>
+              </TableCell>
+              <TableCell align="right">
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Waktu Masuk
                 </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.name}>
+            {absensi.map((data, i) => (
+              <TableRow key={data.id}>
                 <TableCell>
                   <Typography
                     sx={{
@@ -100,30 +106,28 @@ const Absensi = () => {
                       fontWeight: "500",
                     }}
                   >
-                    {product.id}
+                    {i + 1}
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Box
+                  <Typography
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
+                      fontSize: "15px",
+                      fontWeight: "500",
                     }}
                   >
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={600}>
-                        {product.name}
-                      </Typography>
-                      <Typography
-                        color="textSecondary"
-                        sx={{
-                          fontSize: "13px",
-                        }}
-                      >
-                        {product.post}
-                      </Typography>
-                    </Box>
-                  </Box>
+                    {data.pegawai.name}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    sx={{
+                      fontSize: "15px",
+                      fontWeight: "500",
+                    }}
+                  >
+                    {data.pegawai.nip}
+                  </Typography>
                 </TableCell>
                 <TableCell>
                   <Typography
@@ -131,22 +135,26 @@ const Absensi = () => {
                     variant="subtitle2"
                     fontWeight={400}
                   >
-                    {product.pname}
+                    {dayjs(data.tanggal).format("DD-MM-YYYY")}{" "}
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Chip
-                    sx={{
-                      px: "4px",
-                      backgroundColor: product.pbg,
+                  <span
+                    style={{
+                      backgroundColor:
+                        statusDisplay(data.waktuMasuk) === "success"
+                          ? "#f44336"
+                          : "#4caf50",
+                      padding: "6px 8px",
+                      borderRadius: "4px",
                       color: "#fff",
                     }}
-                    size="small"
-                    label={product.priority}
-                  ></Chip>
+                  >
+                    {data.keterangan}
+                  </span>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">${product.budget}k</Typography>
+                  <Typography variant="h6">{data.waktuMasuk}</Typography>
                 </TableCell>
               </TableRow>
             ))}

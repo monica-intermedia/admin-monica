@@ -200,6 +200,15 @@ const FormDialog: React.FC = () => {
                 </MenuItem>
               ))}
             </TextField>
+            {selectedBarang && (
+              <TextField
+                disabled
+                margin="dense"
+                value={`Rp. ${selectedBarang.harga}`}
+                variant="standard"
+                fullWidth
+              />
+            )}
             <TextField
               autoFocus
               required

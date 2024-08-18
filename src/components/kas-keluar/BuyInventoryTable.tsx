@@ -42,6 +42,11 @@ const BuyInventoryTable = (): any => {
   const [filteredData, setFilteredData] = useState<Pembelian[]>([]);
 
   useEffect(() => {
+    localStorage.setItem("startDate", startDate);
+    localStorage.setItem("endDate", endDate);
+  }, [startDate, endDate]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -99,7 +104,7 @@ const BuyInventoryTable = (): any => {
   };
 
   const handlePrint = () => {
-    const printUrl = `http://localhost:3000/kas-keluar/pembelian-barang/print`;
+    const printUrl = `http://localhost:3000/kas-keluar/pembelian-barang/print?startDate=${startDate}&endDate=${endDate}`;
     const printWindow = window.open(printUrl, "_blank");
 
     if (printWindow) {
@@ -123,6 +128,29 @@ const BuyInventoryTable = (): any => {
             <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
               <IconPrinter onClick={handlePrint} />
             </Button>
+            <Box sx={{ marginLeft: 5, marginTop: 1 }}>
+              <TextField
+                id="start-date"
+                label="Tanggal Mulai"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                sx={{ marginRight: 2 }}
+              />
+              <TextField
+                id="end-date"
+                label="Tanggal Akhir"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Box>
           </Box>
           <Box>
             <br />
@@ -136,29 +164,6 @@ const BuyInventoryTable = (): any => {
                 sx={{ width: 1 / 3 }}
               />
             </form>
-          </Box>
-          <Box>
-            <TextField
-              id="start-date"
-              label="Tanggal Mulai"
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              sx={{ marginRight: 2 }}
-            />
-            <TextField
-              id="end-date"
-              label="Tanggal Akhir"
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
           </Box>
         </Box>
         <Table aria-label="simple table" sx={{ whiteSpace: "nowrap", mt: 2 }}>

@@ -179,7 +179,7 @@ const FormDialogKoran = () => {
                 </MenuItem>
               ))}
             </TextField>
-            <TextField
+            {/* <TextField
               required
               margin="dense"
               id="id_barang"
@@ -190,7 +190,7 @@ const FormDialogKoran = () => {
               variant="standard"
               value={koran.id_barang}
               onChange={handleChange}
-            />
+            /> */}
           </DialogContent>
           <DialogActions sx={{ marginBottom: 2 }}>
             <Button onClick={handleClose}>Cancel</Button>

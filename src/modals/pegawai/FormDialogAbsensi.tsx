@@ -20,8 +20,6 @@ const FormDialogAbsensi: React.FC = () => {
   const [absensi, setAbsensi] = useState({
     tanggal: "",
     waktuMasuk: "",
-    waktuKeluar: "",
-    gambar: "",
     keterangan: "",
     id_pegawai: "",
   });
@@ -124,32 +122,6 @@ const FormDialogAbsensi: React.FC = () => {
               fullWidth
               variant="standard"
               value={absensi.waktuMasuk}
-              onChange={handleChange}
-            />
-            <TextField
-              autoFocus
-              required
-              margin="dense"
-              id="waktuKeluar"
-              name="waktuKeluar"
-              label="Waktu Keluar"
-              type="text"
-              fullWidth
-              variant="standard"
-              value={absensi.waktuKeluar}
-              onChange={handleChange}
-            />
-            <TextField
-              autoFocus
-              required
-              margin="dense"
-              id="gambar"
-              name="gambar"
-              label="Gambar"
-              type="text"
-              fullWidth
-              variant="standard"
-              value={absensi.gambar}
               onChange={handleChange}
             />
             <TextField

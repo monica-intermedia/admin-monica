@@ -19,6 +19,7 @@ import FormDialogAbsensi from "../../../modals/pegawai/FormDialogAbsensi";
 
 interface PegawaiProps {
   name: string;
+  nip: number;
 }
 
 interface AbsensiProps {
@@ -30,6 +31,14 @@ interface AbsensiProps {
   keterangan: string;
   pegawai: PegawaiProps;
 }
+
+const statusDisplay = (status: string) => {
+  if (status === "tepat waktu") {
+    return "success";
+  } else {
+    return "error";
+  }
+};
 
 const AbsensiTable = (): React.ReactElement => {
   const [absensi, setAbsensi] = useState<AbsensiProps[]>([]);
@@ -109,22 +118,17 @@ const AbsensiTable = (): React.ReactElement => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
+                  NIP
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
                   Tanggal
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
                   Waktu Masuk
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Waktu Keluar
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="subtitle2" fontWeight={600}>
-                  Gambar
                 </Typography>
               </TableCell>
               <TableCell>
@@ -140,8 +144,8 @@ const AbsensiTable = (): React.ReactElement => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {absensi.map((position, index) => (
-              <TableRow key={position.id}>
+            {absensi.map((data, index) => (
+              <TableRow key={data.id}>
                 <TableCell>
                   <Typography
                     sx={{
@@ -159,7 +163,7 @@ const AbsensiTable = (): React.ReactElement => {
                       fontSize: "13px",
                     }}
                   >
-                    {position.pegawai.name}
+                    {data.pegawai.name}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -169,7 +173,7 @@ const AbsensiTable = (): React.ReactElement => {
                       fontSize: "13px",
                     }}
                   >
-                    {dayjs(position.tanggal).format("DD-MM-YYYY")}
+                    {data.pegawai.nip}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -179,7 +183,7 @@ const AbsensiTable = (): React.ReactElement => {
                       fontSize: "13px",
                     }}
                   >
-                    {position.waktuMasuk}
+                    {dayjs(data.tanggal).format("DD-MM-YYYY")}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -189,7 +193,7 @@ const AbsensiTable = (): React.ReactElement => {
                       fontSize: "13px",
                     }}
                   >
-                    {position.waktuKeluar}
+                    {data.waktuMasuk}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -199,11 +203,7 @@ const AbsensiTable = (): React.ReactElement => {
                       fontSize: "13px",
                     }}
                   >
-                    <img
-                      src={position.gambar}
-                      alt="Absensi"
-                      style={{ width: "50px", height: "50px" }}
-                    />
+                    {data.keterangan}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -213,12 +213,24 @@ const AbsensiTable = (): React.ReactElement => {
                       fontSize: "13px",
                     }}
                   >
-                    {position.keterangan}
+                    <span
+                      style={{
+                        backgroundColor:
+                          statusDisplay(data.keterangan) == "success"
+                            ? "#f44336"
+                            : "#4caf50",
+                        padding: "6px 8px",
+                        borderRadius: "4px",
+                        color: "#fff",
+                      }}
+                    >
+                      {data.keterangan}
+                    </span>
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Link
-                    href={`/pegawai/jabatan/${position.id}`}
+                    href={`/pegawai/jabatan/${data.id}`}
                     style={{ marginRight: "10px" }}
                   >
                     <Button variant="outlined">Edit</Button>
@@ -226,7 +238,7 @@ const AbsensiTable = (): React.ReactElement => {
                   <Button
                     variant="outlined"
                     color="error"
-                    onClick={() => handleDelete(position.id)}
+                    onClick={() => handleDelete(data.id)}
                   >
                     Delete
                   </Button>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   Container,
@@ -29,22 +29,31 @@ const Index = () => {
     tanggal: Date;
   }
 
-  const [data, setData] = React.useState<DataProps[]>([]);
+  const [data, setData] = useState<DataProps[]>([]);
+  const [startDate, setStartDate] = useState<any>("");
+  const [endDate, setEndDate] = useState<any>("");
+
+  useEffect(() => {
+    const storedStartDate = localStorage.getItem("startDate");
+    const storedEndDate = localStorage.getItem("endDate");
+
+    setStartDate(storedStartDate);
+    setEndDate(storedEndDate);
+  }, []);
+
+  console.log(startDate);
+  console.log(endDate);
 
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/kaskeluar/pembelianbarang"
+        `http://localhost:8080/kaskeluar/pembelianbarangbydate?startDate=${startDate}&endDate=${endDate}`
       );
       setData(response.data.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
-  React.useEffect(() => {
-    fetchData();
-  }, []);
 
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -54,6 +63,10 @@ const Index = () => {
     };
     return new Date(date).toLocaleDateString(undefined, options);
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <Container>

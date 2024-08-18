@@ -47,7 +47,7 @@ const StokBarangTable = (): any => {
   };
 
   return (
-    <DashboardCard title="Tabel Pembelian Lainya">
+    <DashboardCard title="Tabel Stok Barang">
       <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
         <Box>
           <Box display="flex">

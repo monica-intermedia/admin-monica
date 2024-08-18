@@ -76,13 +76,13 @@ const FormDialogPegawai: React.FC = () => {
           const response = await axios.get(
             "http://localhost:8080/pegawai/pegawai"
           );
-          console.log("Pegawai data:", response.data); // Logging response data
+          console.log("Pegawai data:", response.data);
           setAddPegawai(response.data.data);
         };
 
         await fetchData();
         handleClose();
-        window.location.replace("/pegawai/jabatan");
+        window.location.replace("/pegawai/data-pegawai");
       }
     } catch (error) {
       console.error("Failed to add data", error);
