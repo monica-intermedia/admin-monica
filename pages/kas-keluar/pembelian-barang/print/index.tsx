@@ -47,7 +47,7 @@ const Index = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/kaskeluar/pembelianbarangbydate?startDate=${startDate}&endDate=${endDate}`
+        `http://localhost:8080/kaskeluar/pembelianbarang`
       );
       setData(response.data.data);
     } catch (error) {
