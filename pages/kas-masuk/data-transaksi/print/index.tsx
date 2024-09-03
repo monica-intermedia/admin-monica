@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import dayjs from "dayjs";
 import {
   Container,
@@ -34,29 +33,19 @@ const Index = () => {
 
   const [data, setData] = React.useState<Pembelian[]>([]);
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:8080/penjualan/transaksi"
-      );
-      setData(response.data.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
   React.useEffect(() => {
-    fetchData();
+    // Retrieve data from localStorage
+    const storedData = localStorage.getItem("filteredData");
+    if (storedData) {
+      // Parse and set data to state
+      setData(JSON.parse(storedData));
+    }
   }, []);
 
-  const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    };
-    return new Date(date).toLocaleDateString(undefined, options);
-  };
+  const totalPayment = data.reduce(
+    (total, current) => total + current.gross_amount,
+    0
+  );
 
   return (
     <Container>
@@ -213,6 +202,12 @@ const Index = () => {
             )}
           </TableBody>
         </Table>
+        <Box sx={{ mt: 4 }}>
+          <h2>Total Pembayaran</h2>
+          <Typography variant="h6">
+            Rp {totalPayment.toLocaleString("id-ID")}
+          </Typography>
+        </Box>
       </TableContainer>
     </Container>
   );

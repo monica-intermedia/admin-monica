@@ -10,6 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import PropTypes from "prop-types";
+import FormNotification from "../../../modals/kas-masuk/FormNotification";
 
 // components
 import Profile from "./Profile";
@@ -61,9 +62,7 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
           aria-controls="msgs-menu"
           aria-haspopup="true"
         >
-          <Badge variant="dot" color="primary">
-            <IconBellRinging size="21" stroke="1.5" />
-          </Badge>
+          <FormNotification />
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">

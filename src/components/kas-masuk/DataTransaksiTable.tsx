@@ -24,6 +24,7 @@ const DataTransaksiTable = (): any => {
     harga: number;
     warna: number;
   }
+
   interface Pembelian {
     id: string;
     namaKoran: string;
@@ -36,6 +37,10 @@ const DataTransaksiTable = (): any => {
   }
 
   const [transaksi, setTransaksi] = useState<Pembelian[]>([]);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filteredData, setFilteredData] = useState<Pembelian[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,6 +55,40 @@ const DataTransaksiTable = (): any => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    filterData();
+  }, [startDate, endDate, searchQuery, transaksi]);
+
+  useEffect(() => {
+    // Save filtered data to localStorage whenever it changes
+    localStorage.setItem("filteredData", JSON.stringify(filteredData));
+  }, [filteredData]);
+
+  const filterData = () => {
+    let filtered = transaksi;
+
+    // Filter by date range
+    if (startDate && endDate) {
+      filtered = filtered.filter((item) => {
+        const itemDate = dayjs(item.tanggal);
+        return (
+          itemDate.isAfter(dayjs(startDate).subtract(1, "day")) &&
+          itemDate.isBefore(dayjs(endDate).add(1, "day"))
+        );
+      });
+    }
+
+    // Filter by search query
+    if (searchQuery) {
+      filtered = filtered.filter((item) =>
+        item.namaKoran.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Update filteredData state with the filtered results
+    setFilteredData(filtered);
+  };
 
   const fetchData = async () => {
     const response = await axios.get(
@@ -109,19 +148,43 @@ const DataTransaksiTable = (): any => {
             <Button variant="contained" sx={{ px: 3, marginLeft: 2 }}>
               <IconPrinter onClick={handlePrint} />
             </Button>
-          </Box>
-          <Box>
-            <br />
-            <form>
+
+            <Box sx={{ marginLeft: 5, marginTop: 1 }}>
               <TextField
-                id="search-bar"
-                label="Masukkan nama barang"
-                variant="outlined"
-                placeholder="Search..."
-                size="small"
-                sx={{ width: 1 / 3 }}
+                id="start-date"
+                label="Tanggal Mulai"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                sx={{ marginRight: 2 }}
               />
-            </form>
+              <TextField
+                id="end-date"
+                label="Tanggal Akhir"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Box>
+          </Box>
+
+          <Box sx={{ marginTop: 5 }}>
+            <TextField
+              id="search-bar"
+              label="Masukkan nama koran"
+              variant="outlined"
+              placeholder="Search..."
+              size="small"
+              sx={{ width: 1 / 3 }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </Box>
         </Box>
         <Table aria-label="simple table" sx={{ whiteSpace: "nowrap", mt: 2 }}>
@@ -185,8 +248,8 @@ const DataTransaksiTable = (): any => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.isArray(transaksi) && transaksi.length > 0 ? (
-              transaksi.map((option, index) => (
+            {filteredData.length > 0 ? (
+              filteredData.map((option, index) => (
                 <TableRow key={option.id}>
                   <TableCell>
                     <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
